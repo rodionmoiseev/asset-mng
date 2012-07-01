@@ -24,3 +24,5 @@ out/
 #
 .gradle
 build/
+
+web/lib
