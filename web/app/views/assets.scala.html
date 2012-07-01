@@ -1,0 +1,93 @@
+@()(implicit m: i18n.Messages)
+
+@main("assets", "assets"){
+    <div class="well">
+        <div>
+            <i class="icon-plus-sign"></i>
+            <a id="link-add-asset" href="#">@m.views.assets.addAsset</a>
+
+            <div class="hidden alert alert-success" id="alert-add-asset">
+                <a class="close" href="#">&times;</a>
+                <span></span>
+            </div>
+
+            <div id="form-add-asset" class="hidden">
+                <form data-bind="submit: save">
+                    <fieldset>
+                        <div class="control-group" data-bind="css: { error: errors.hostname }">
+                            <label>@m.asset.hostname</label>
+                            <div class="controls">
+                                <input data-bind="value: hostname">
+                                <p class="help-block" data-bind="text: errors.hostname"></p>
+                            </div>
+                        </div>
+                        <div class="control-group" data-bind="css: { error: errors.ip }">
+                            <label>@m.asset.ip</label>
+                            <div class="controls">
+                                <input data-bind="value: ip">
+                                <p class="help-block" data-bind="text: errors.ip"></p>
+                            </div>
+                        </div>
+                        <div class="control-group">
+                            <label>@m.asset.description</label>
+                            <div class="controls">
+                                <textarea rows="3" cols="30" data-bind="value: description"></textarea>
+                            </div>
+                        </div>
+                        <div class="control-group" data-bind="css: { error: errors.admin }">
+                            <label>@m.asset.admin</label>
+                            <div class="controls">
+                                <input data-bind="value: admin">
+                                <p class="help-block" data-bind="text: errors.admin"></p>
+                            </div>
+                        </div>
+                        <div class="control-group" data-bind="css: { error: errors.tags }">
+                            <label>@m.asset.tags</label>
+                            <div class="controls">
+                                <input data-bind="value: tags">
+                                <p class="help-block" data-bind="text: errors.tags"></p>
+                            </div>
+                        </div>
+                        <input class="btn btn-success" type="submit" value="@m.buttons.save">
+                        <a id="btn-cancel-add-asset" class="btn btn-danger">
+                            <i class="icon-remove"></i>
+                            @m.buttons.cancel
+                        </a>
+                    </fieldset>
+                </form>
+            </div>
+        </div>
+        <div>
+            <i class="icon-circle-arrow-down"></i>
+            @m.views.assets.importAssets
+         </div>
+    </div>
+
+    <div>
+        <input type="text" size="30" class="search-query" placeholder="Filter"><i class="icon-search"></i>
+    </div>
+    <div id="assets-list">
+        <table class="table table-striped table-bordered table-condensed">
+            <thead>
+                <tr>
+                    <th>@m.asset.hostname</th>
+                    <th>@m.asset.ip</th>
+                    <th>@m.asset.description</th>
+                    <th>@m.asset.admin</th>
+                    <th>@m.asset.tags</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody data-bind="foreach: assets">
+                <tr>
+                    <td><span data-bind="text: hostname"></span></td>
+                    <td><span data-bind="text: ip"></span></td>
+                    <td><span data-bind="text: description"></span></td>
+                    <td><span data-bind="text: admin"></span></td>
+                    <td><span data-bind="text: tags"></span></td>
+                    <td><a href="#"><i class="icon-trash"></i></a></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+}

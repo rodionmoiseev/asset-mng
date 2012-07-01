@@ -1,0 +1,53 @@
+ul{
+    margin-left: 0px;
+    padding-left: 0px;
+}
+li{
+    list-style: none;
+    margin-left: 0px;
+}
+
+.column-small{
+    width: 10%;
+}
+
+.asset-task{
+    position: relative;
+    border-left: 5px solid #dddddd;
+    padding-left: 5px;
+    margin-top: 5px;
+}
+
+.asset-task-user{
+    color: gray;
+    font-size: 8pt;
+}
+.asset-task-user:before{
+    content: '\2014\00a0\00a0' /* mdash space space */
+}
+
+.asset-controls{
+    position: absolute;
+    top: 0px;
+    right: 0px;
+    opacity: 0.2;
+}
+
+.asset-table>thead>tr {
+    border-bottom: 1px solid #ccc;
+}
+.asset-table>tbody>tr {
+    border-bottom: 1px solid #ccc;
+}
+
+#edit-asset-task{
+    display: none;
+}
+
+.selected {
+    opacity: 0.5;
+}
+
+div.hidden {
+    display: none;
+}
