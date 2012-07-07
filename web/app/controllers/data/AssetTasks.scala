@@ -43,7 +43,11 @@ object AssetTasks extends Controller {
 
   def toDelimitedList(tags: String): List[String] = {
     if (!tags.trim.isEmpty)
-      tags.split(",").map(_.trim).toList
+      tags.split(",").map {
+        _.trim
+      }.collect {
+        case s if !s.isEmpty => s
+      }.toList
     else
       List()
   }
