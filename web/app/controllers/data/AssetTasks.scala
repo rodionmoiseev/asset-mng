@@ -3,18 +3,14 @@ package controllers.data
 import play.api.mvc._
 import com.codahale.jerkson.Json._
 import java.util.Date
-import controllers.{IPUtils, SimpleAssetsDAO, SimpleAssetStateDAO}
-import models.view._
 import play.api.libs.json.Json._
-import scala.Some
 import play.api.data.Form
 import play.api.data.Forms._
 import scala.Some
-import models.view.ViewAssetTaskGroup
-import scala.Some
-import models.view.ViewAssetTask
-import models.{AssetTask, AssetState}
+import models.view._
+import models._
 import i18n.Messages
+import dao.Module._
 
 /**
  *
@@ -24,39 +20,55 @@ import i18n.Messages
 object AssetTasks extends Controller {
   implicit def m: Messages = Messages.m
 
-  case class NewTask(hostname: String, description: String, user: String, tags: String)
+  case class AssetTaskForm(asset_id: Long, description: String, user: String, tags: String, icons: String)
 
   val taskForm = Form(mapping(
-    "hostname" -> nonEmptyText,
-    "description" -> text,
-    "user" -> text,
-    "tags" -> text)
-    (NewTask.apply)(NewTask.unapply))
+    "asset_id" -> longNumber,
+    "description" -> nonEmptyText,
+    "user" -> nonEmptyText,
+    "tags" -> text,
+    "icons" -> text)
+    (AssetTaskForm.apply)(AssetTaskForm.unapply))
 
   def task2view = (task: models.AssetTask) =>
-    ViewAssetTask(task.id, task.user, task.desc, task.dateStr, task.tags)
+    ViewAssetTask(task.id, task.asset_id, task.user, task.description, task.dateStr, task.tags, task.icons)
 
-  def form2task = (taskForm: NewTask) =>
-    AssetTask(123L, taskForm.user, taskForm.description, new Date(), taskForm.tags.split(", ").toList)
+  def form2task = (taskForm: AssetTaskForm) =>
+    AssetTask(-1L, taskForm.asset_id,
+      taskForm.user,
+      taskForm.description,
+      new Date,
+      toDelimitedList(taskForm.tags),
+      toDelimitedList(taskForm.icons))
 
-  def state2asset = (state: models.AssetState) =>
-    ViewAssetTaskGroup(Assets.asset2view(state.asset), state.tasks map task2view)
+  def toDelimitedList(tags: String): List[String] = {
+    if (!tags.trim.isEmpty)
+      tags.split(",").map(_.trim).toList
+    else
+      List()
+  }
+
+  def asTaskGroup = (entry: (Asset, List[AssetTask])) =>
+    ViewAssetTaskGroup(Assets.asset2view(entry._1), entry._2 map task2view)
 
   def groupedByAsset = Action {
-    Ok(generate(SimpleAssetStateDAO.get.list map state2asset))
+    val tasks = assetTasksDB.all
+    val groups = assetsDB.all map {
+      (asset) => (asset, tasks.filter((task) => task.asset_id == asset.id))
+    }
+    Ok(generate(groups map asTaskGroup))
   }
 
   def add = Action {
     implicit request =>
+      println(request.body.asJson)
       request.body.asJson match {
         case Some(json) => taskForm.bind(json).fold(
           errors => BadRequest(errors.errorsAsJson),
           viewTask => {
-            SimpleAssetsDAO.me.list.find((asset)=> asset.hostname == viewTask.hostname) match {
-              case Some(asset) => SimpleAssetStateDAO.me.addTask(asset, form2task(viewTask))
-            }
+            val newTask = assetTasksDB.save(form2task(viewTask))
             Ok(generate(Map("status" -> m.views.tasks.successfullyAdded,
-                          "task" -> viewTask)))
+              "task" -> task2view(newTask))))
           }
         )
         case None => BadRequest(toJson(

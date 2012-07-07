@@ -28,10 +28,11 @@
                                 </select>
                             </div>
                         </div>
-                        <div class="control-group">
+                        <div class="control-group" data-bind="css: { error: errors.description }">
                             <label>@m.task.description</label>
                             <div class="controls">
                                 <textarea rows="3" cols="30" data-bind="value: description"></textarea>
+                                <p class="help-block" data-bind="text: errors.description"></p>
                             </div>
                         </div>
                         <div class="control-group" data-bind="css: { error: errors.tags }">
@@ -39,6 +40,13 @@
                             <div class="controls">
                                 <input data-bind="value: tags">
                                 <p class="help-block" data-bind="text: errors.tags"></p>
+                            </div>
+                        </div>
+                        <div class="control-group" data-bind="css: { error: errors.icons }">
+                            <label>@m.task.icons</label>
+                            <div class="controls">
+                                <input id="icons" data-bind="value: icons">
+                                <p class="help-block" data-bind="text: errors.icons"></p>
                             </div>
                         </div>
                         <input class="btn btn-success" type="submit" value="@m.buttons.save">
@@ -70,7 +78,13 @@
                    <ul data-bind="foreach: tasks">
                        <li>
                            <div class="asset-task">
-                               <span data-bind="text: desc"></span>
+                               <div class="asset-task-icons" data-bind="foreach: icons">
+                                   <i data-bind="attr: { 'class': 'icon-' + $data }"></i>
+                               </div>
+                               <span data-bind="text: description"></span>
+                               <div data-bind="foreach: tags">
+                                   <span class="label" data-bind="text: $data"></span>
+                               </div>
                                <div class="asset-task-user">
                                    <i class="icon-user"></i>
                                    <span data-bind="text: user"></span>

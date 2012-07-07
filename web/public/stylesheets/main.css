@@ -11,6 +11,10 @@ li{
     width: 10%;
 }
 
+.asset-task-icons{
+    display: inline;
+    text-align: left;
+}
 .asset-task{
     position: relative;
     border-left: 5px solid #dddddd;

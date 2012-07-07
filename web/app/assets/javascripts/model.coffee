@@ -2,11 +2,11 @@ window.AM = {}
 
 class AM.Asset
   constructor: (asset) ->
+    @id = asset.id
     @hostname = ko.observable(asset.hostname)
     @ip = ko.observable(asset.ip)
     @description = ko.observable(asset.description)
     @admin = ko.observable(asset.admin)
-    @tags = ko.observable(asset.tags)
 
 class AM.AssetList
   constructor: (assets) ->
@@ -18,10 +18,13 @@ class AM.AssetList
 
 class AM.AssetTask
   constructor: (task) ->
-    @id = ko.observable(task.id)
+    @id = task.id
+    @asset_id = task.asset_id
     @user = ko.observable(task.user)
-    @desc = ko.observable(task.desc)
+    @description = ko.observable(task.description)
     @date = ko.observable(task.date)
+    @tags = task.tags
+    @icons = task.icons
 
   showControls: (item, event) ->
     $(event.target).find(".asset-controls").animate({opacity: 0.6}, 100)
@@ -41,5 +44,7 @@ class AM.AssetTaskGroupList
     @taskGroups($.map taskGroups, (taskGroup) -> new AM.AssetTaskGroup(taskGroup))
 
   addTask: (task) ->
-    ko.utils.arrayForEach @taskGroups, (taskGroup) ->
-      if taskGroup.asset().hostname = task.hostname then taskGroup.tasks.unshift new AM.AssetTask(task)
+    window.console.log("addTask(" + task + ")")
+    ko.utils.arrayForEach @taskGroups(), (taskGroup) ->
+      window.console.log("match taskGroup.asset.id=" + taskGroup.asset().id + " with task.asset_id=" + task.asset_id)
+      if taskGroup.asset().id == task.asset_id then taskGroup.tasks.unshift new AM.AssetTask(task)

@@ -98,10 +98,6 @@ trait Asset {
   @En("Admin")
   @Ja("管理者")
   def admin: String
-
-  @En("Tags")
-  @Ja("タグ")
-  def tags: String
 }
 
 @C10NMessages
@@ -125,6 +121,10 @@ trait Task {
   @En("Task list")
   @Ja("タスク")
   def taskList: String
+
+  @En("Icons")
+  @Ja("アイコン")
+  def icons: String
 }
 
 @C10NMessages

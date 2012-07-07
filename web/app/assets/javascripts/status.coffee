@@ -2,18 +2,19 @@ class NewTaskForm
   constructor: (taskList, allAssets) ->
     @assets = allAssets.assets
     @asset = ko.observable()
-    @hostname = ko.computed(=> @asset()?.hostname)
+    @asset_id = ko.computed(=> @asset()?.id)
     @description = ko.observable('')
     @user = ko.observable('')
     @tags = ko.observable('')
-    @fields = ['asset', 'description', 'user', 'tags']
+    @icons = ko.observable('')
+    @fields = ['asset', 'description', 'user', 'tags', 'icons']
     @errors = {}
     @errors[name] = ko.observable('') for name in @fields
     @taskList = taskList
 
   fillErrors: (e) ->
     for name, value of e
-      @errors[name](value)
+      @errors[name]?(value)
 
   clear: ->
     @[field]('') for field in @fields
@@ -27,12 +28,13 @@ class NewTaskForm
       contentType: 'application/json'
       success: (response) =>
         r = JSON.parse(response)
-        @taskList.addTask r.task
+        @taskList.addTask(r.task)
         alrt = $('#alert-add-task')
         alrt.children('span').text r.status
         alrt.show()
         @clear()
       error: (jqXHR) =>
+        window.console.log(jqXHR.responseText)
         @fillErrors(JSON.parse(jqXHR.responseText))
 
 $ ->
@@ -49,3 +51,13 @@ $ ->
   $('#alert-add-task').children('.close').click => $('#alert-add-task').hide()
   $('#link-add-task').click -> $('#form-add-task').show 'fast'
   $('#btn-cancel-add-task').click -> $('#form-add-task').hide 'fast'
+
+  a = $("#icons").typeahead
+    source: window.twitter_bootstrap_icons
+    updater: (item) ->
+      res = @query.split(',')[0..-2]
+      res.push item
+      res = (x.trim() for x in res)
+      res.join ", "
+    matcher: (item) -> ~item.toLowerCase().indexOf(@query.toLowerCase().split(',').pop().trim())
+    highlighter: (item) -> '<i class="icon-' + item + '"></i> ' + item

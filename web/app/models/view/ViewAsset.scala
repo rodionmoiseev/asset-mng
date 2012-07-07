@@ -5,8 +5,9 @@ package models.view
  * @author rodion
  */
 
-case class ViewAsset(hostname: String,
+case class ViewAsset(id: Long,
+                     hostname: String,
                      ip: String,
                      description: String,
                      admin: String,
-                     tags: String)
+                     parent_id: Option[Long])

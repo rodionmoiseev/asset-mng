@@ -6,10 +6,11 @@ import play.api.libs.json.Json.toJson
 import play.api.mvc._
 import models.Asset
 import models.view.ViewAsset
-import controllers.{IPUtils, SimpleAssetsDAO}
+import controllers.IPUtils
 import play.api.data._
 import play.api.data.Forms._
 import i18n.Messages
+import dao.Module._
 
 /**
  *
@@ -20,29 +21,39 @@ object Assets extends Controller {
   val m: Messages = Messages.m
 
   def asset2view = (asset: Asset) =>
-    ViewAsset(asset.hostname,
+    ViewAsset(
+      asset.id,
+      asset.hostname,
       asset.ip,
       asset.description,
       asset.admin,
-      asset.tags.mkString(", "))
+      asset.parent_id)
 
-  def view2asset = (asset: ViewAsset) =>
-    Asset(asset.hostname,
+  def form2asset = (asset: AssetForm) =>
+    Asset(
+      -1L,
+      asset.hostname,
       asset.ip,
       asset.description,
       asset.admin,
-      asset.tags.split(",").toList)
+      asset.parent_id)
+
+  case class AssetForm(hostname: String,
+                       ip: String,
+                       description: String,
+                       admin: String,
+                       parent_id: Option[Long])
 
   val assetForm = Form(mapping(
     "hostname" -> nonEmptyText,
     "ip" -> nonEmptyText.verifying("Must be a valid IPv4/v6 address", IPUtils.isIPAddress _),
     "description" -> text,
     "admin" -> text,
-    "tags" -> text)
-    (ViewAsset.apply)(ViewAsset.unapply))
+    "parent_id" -> optional(longNumber))
+    (AssetForm.apply)(AssetForm.unapply))
 
   def list = Action {
-    Ok(generate(SimpleAssetsDAO.me.list map asset2view))
+    Ok(generate(assetsDB.all map asset2view))
   }
 
   def add = Action {
@@ -51,9 +62,9 @@ object Assets extends Controller {
         case Some(json) => assetForm.bind(json).fold(
           errors => BadRequest(errors.errorsAsJson),
           viewAsset => {
-            SimpleAssetsDAO.me.save(view2asset(viewAsset))
+            assetsDB.save(form2asset(viewAsset))
             Ok(generate(Map("status" -> m.views.assets.successfullyAdded,
-                          "asset" -> viewAsset)))
+              "asset" -> viewAsset)))
           }
         )
         case None => BadRequest(toJson(

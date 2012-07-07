@@ -6,7 +6,9 @@ package models.view
  */
 
 case class ViewAssetTask(id: Long,
-                           user: String,
-                           desc: String,
-                           date: String,
-                           tags: List[String])
+                         asset_id: Long,
+                         user: String,
+                         description: String,
+                         date: String,
+                         tags: List[String],
+                         icons: List[String])
