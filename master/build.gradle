@@ -11,8 +11,10 @@ buildscript {
 
 apply plugin: 'idea-scala-project'
 
-repositories{
-  mavenCentral()
+allprojects{
+  repositories{
+    mavenCentral()
+  }
 }
 
 dependencies{

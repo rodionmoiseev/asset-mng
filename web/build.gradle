@@ -45,6 +45,7 @@ configurations{
 dependencies{
   // User defined libraries
   compile 'c10n:c10n-core:1.1-SNAPSHOT'
+  compile 'commons-io:commons-io:2.4'
 
   // Default Gradle Scala plugin settings below (see Scala plugin page for up-to-date info)
 

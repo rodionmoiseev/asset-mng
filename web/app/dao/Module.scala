@@ -1,13 +1,13 @@
 package dao
 
+import filestorage.{CSVAssetsDB, CSVAssetTasksDB}
 import models.{Persistent, Asset, AssetTask}
 import java.util.concurrent.atomic.AtomicLong
 import collection.mutable
 
-//just to stop IntelliJ from complaining
 object Module {
-  implicit val assetTasksDB: AssetTasksDB = new InMemoryAssetTasksDB
-  implicit val assetsDB: AssetsDB = new InMemoryAssetsDB
+  implicit val assetTasksDB: AssetTasksDB = new CSVAssetTasksDB("db/tasks.csv", "UTF-8")
+  implicit val assetsDB: AssetsDB = new CSVAssetsDB("db/assets.csv", "UTF-8")
 }
 
 class InMemoryDB[A <: Persistent[A]] extends DB[A] {

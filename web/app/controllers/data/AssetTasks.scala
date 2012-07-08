@@ -65,7 +65,6 @@ object AssetTasks extends Controller {
 
   def add = Action {
     implicit request =>
-      println(request.body.asJson)
       request.body.asJson match {
         case Some(json) => taskForm.bind(json).fold(
           errors => BadRequest(errors.errorsAsJson),
