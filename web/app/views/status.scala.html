@@ -75,6 +75,14 @@
                    <h3 data-bind="with: asset">
                        <span data-bind="text: hostname"></span>
                    </h3>
+                   <!-- ko if: tasks().length == 0 -->
+                   <ul>
+                       <li>
+                           <i class="icon-ok-circle"></i>
+                           @m.asset.available
+                       </li>
+                   </ul>
+                   <!-- /ko -->
                    <ul data-bind="foreach: tasks">
                        <li>
                            <div class="asset-task">

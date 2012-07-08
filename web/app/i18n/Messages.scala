@@ -98,6 +98,10 @@ trait Asset {
   @En("Admin")
   @Ja("管理者")
   def admin: String
+
+  @En("Not used by anyone")
+  @Ja("空いています")
+  def available: String
 }
 
 @C10NMessages
