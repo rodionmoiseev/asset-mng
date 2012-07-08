@@ -16,11 +16,8 @@ import com.codahale.jerkson.Json._
 
 abstract class CSVDB[A <: Persistent[A]](val file: String, val enc: String) extends DB[A] {
   val frw = new SafeFileWriter(file, enc)
-  var uniqId: AtomicLong = new AtomicLong
   private val items: mutable.MutableList[A] = new mutable.MutableList[A]
   private var synced = false
-
-  def nextUniqId: Long = uniqId.incrementAndGet
 
   def all: List[A] = {
     sync() //Sync file-memory state
@@ -39,7 +36,7 @@ abstract class CSVDB[A <: Persistent[A]](val file: String, val enc: String) exte
   }
 
   def save(item: A): A = {
-    val newItem = item.withId(nextUniqId)
+    val newItem = item.withId(items.length)
     items += newItem
     frw.write(generate(items.toList))
     newItem
