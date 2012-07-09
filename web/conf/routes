@@ -10,6 +10,8 @@ GET     /status                     controllers.Application.status
 # Json Data Access
 GET     /dao/assets                 controllers.data.Assets.list
 POST    /dao/assets/add             controllers.data.Assets.add
+DELETE  /dao/assets/delete/:id      controllers.data.Assets.delete(id: Long)
+
 GET     /dao/tasks/groupedByAsset   controllers.data.AssetTasks.groupedByAsset
 POST    /dao/tasks/add              controllers.data.AssetTasks.add
 DELETE  /dao/tasks/delete/:id       controllers.data.AssetTasks.delete(id: Long)

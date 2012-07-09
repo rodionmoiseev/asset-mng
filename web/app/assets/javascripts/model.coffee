@@ -16,6 +16,15 @@ class AM.AssetList
   addAsset: (asset) ->
     @assets.unshift new AM.Asset(asset)
 
+  removeAsset: (asset) =>
+    $.ajax
+       url: '/dao/assets/delete/' + asset.id
+       type: 'DELETE'
+       success: (response) =>
+         @assets.remove(asset)
+       error: (jqXHR) =>
+         window.console.log(jqXHR.responseText)
+
 class AM.AssetTask
   constructor: (task) ->
     @id = task.id

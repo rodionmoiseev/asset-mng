@@ -73,4 +73,9 @@ object Assets extends Controller {
         ))
       }
   }
+
+  def delete(id: Long) = Action {
+    assetsDB.delete(id)
+    Ok(toJson(Map("status" -> "OK")))
+  }
 }
