@@ -52,6 +52,14 @@ $ ->
   $('#link-add-task').click -> $('#form-add-task').show 'fast'
   $('#btn-cancel-add-task').click -> $('#form-add-task').hide 'fast'
 
+  #
+  # Task controls fade in/out effect
+  #$(@).find('.asset-task-controls').animate { opacity: 1.0 }, 'fast',
+  $('.asset-task-controls').live 'mouseenter', ->
+    $(@).css { opacity: 1.0 }
+  $('.asset-task-controls').live 'mouseleave', ->
+    $(@).css { opacity: 0.3 }
+
   a = $("#icons").typeahead
     source: window.twitter_bootstrap_icons
     updater: (item) ->

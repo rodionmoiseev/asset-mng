@@ -30,11 +30,11 @@ li{
     content: '\2014\00a0\00a0' /* mdash space space */
 }
 
-.asset-controls{
+.asset-task-controls{
     position: absolute;
     top: 0px;
     right: 0px;
-    opacity: 0.2;
+    opacity: 0.3;
 }
 
 .asset-table>thead>tr {

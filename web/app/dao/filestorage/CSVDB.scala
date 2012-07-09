@@ -1,13 +1,12 @@
 package dao.filestorage
 
 import dao.{AssetTasksDB, AssetsDB, DB}
-import java.util.concurrent.atomic.AtomicLong
 import models.Persistent
-import collection.mutable
 import models.AssetTask
 import scala.Some
 import models.Asset
 import com.codahale.jerkson.Json._
+import collection.mutable.ListBuffer
 
 /**
  *
@@ -16,7 +15,7 @@ import com.codahale.jerkson.Json._
 
 abstract class CSVDB[A <: Persistent[A]](val file: String, val enc: String) extends DB[A] {
   val frw = new SafeFileWriter(file, enc)
-  private val items: mutable.MutableList[A] = new mutable.MutableList[A]
+  private val items: ListBuffer[A] = new ListBuffer[A]
   private var synced = false
 
   def all: List[A] = {
@@ -38,8 +37,19 @@ abstract class CSVDB[A <: Persistent[A]](val file: String, val enc: String) exte
   def save(item: A): A = {
     val newItem = item.withId(items.length)
     items += newItem
-    frw.write(generate(items.toList))
+    write()
     newItem
+  }
+
+  def delete(id: Long) {
+    items.remove(items.indexWhere {
+      _.id == id
+    })
+    write()
+  }
+
+  private def write(){
+    frw.write(generate(items.toList))
   }
 
   def convert(data: String): List[A]

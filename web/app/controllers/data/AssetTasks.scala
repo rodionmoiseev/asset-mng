@@ -80,4 +80,9 @@ object AssetTasks extends Controller {
         ))
       }
   }
+
+  def delete(id: Long) = Action {
+    assetTasksDB.delete(id)
+    Ok(toJson(Map("status" -> "OK")))
+  }
 }

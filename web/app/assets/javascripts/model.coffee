@@ -38,6 +38,15 @@ class AM.AssetTaskGroup
     @tasks = ko.observableArray([])
     @tasks($.map taskGroup.tasks, (task) -> new AM.AssetTask(task))
 
+  removeTask: (task) =>
+    $.ajax
+      url: '/dao/tasks/delete/' + task.id
+      type: 'DELETE'
+      success: (response) =>
+        @tasks.remove(task)
+      error: (jqXHR) =>
+        window.console.log(jqXHR.responseText)
+
 class AM.AssetTaskGroupList
   constructor: (taskGroups) ->
     @taskGroups = ko.observableArray([])

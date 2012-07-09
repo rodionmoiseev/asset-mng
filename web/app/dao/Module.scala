@@ -24,6 +24,10 @@ class InMemoryDB[A <: Persistent[A]] extends DB[A] {
     items += newItem
     newItem
   }
+
+  def delete(id: Long) {
+    throw new UnsupportedOperationException("delete is not supported")
+  }
 }
 
 class InMemoryAssetTasksDB extends InMemoryDB[AssetTask] with AssetTasksDB

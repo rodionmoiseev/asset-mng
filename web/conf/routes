@@ -12,6 +12,7 @@ GET     /dao/assets                 controllers.data.Assets.list
 POST    /dao/assets/add             controllers.data.Assets.add
 GET     /dao/tasks/groupedByAsset   controllers.data.AssetTasks.groupedByAsset
 POST    /dao/tasks/add              controllers.data.AssetTasks.add
+DELETE  /dao/tasks/delete/:id       controllers.data.AssetTasks.delete(id: Long)
 
 # Map static resources from the /public folder to the /assets URL path
 GET     /assets/*file               controllers.Assets.at(path="/public", file)
