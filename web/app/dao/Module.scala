@@ -6,9 +6,9 @@ import java.util.concurrent.atomic.AtomicLong
 import collection.mutable
 
 object Module {
-  implicit val assetTasksDB: AssetTasksDB = new CSVAssetTasksDB("db/tasks.csv", "UTF-8")
-  implicit val assetsDB: AssetsDB = new CSVAssetsDB("db/assets.csv", "UTF-8")
-  implicit val activityDB: ActivityDB = new CSVActivityDB("db/activity.csv", "UTF-8")
+  implicit val assetTasksDB: AssetTasksDB = new JsonAssetTasksDB("db/tasks.csv", "UTF-8")
+  implicit val assetsDB: AssetsDB = new JsonAssetsDB("db/assets.csv", "UTF-8")
+  implicit val activityDB: ActivityDB = new JsonActivityDB("db/activity.csv", "UTF-8")
 }
 
 class InMemoryDB[A <: Persistent[A]] extends DB[A] {

@@ -20,7 +20,7 @@ import java.util.Date
  * @author rodion
  */
 
-abstract class CSVDB[A <: Persistent[A]](val file: String, val enc: String) extends DB[A] {
+abstract class JsonDB[A <: Persistent[A]](val file: String, val enc: String) extends DB[A] {
   val frw = new SafeFileWriter(file, enc)
   private val items: ListBuffer[A] = new ListBuffer[A]
   private var synced = false
@@ -65,15 +65,15 @@ abstract class CSVDB[A <: Persistent[A]](val file: String, val enc: String) exte
   def read(data: String): List[A]
 }
 
-class CSVAssetsDB(file: String, enc: String) extends CSVDB[Asset](file, enc) with AssetsDB {
+class JsonAssetsDB(file: String, enc: String) extends JsonDB[Asset](file, enc) with AssetsDB {
   def read(data: String) = parse[List[Asset]](data)
 }
 
-class CSVAssetTasksDB(file: String, enc: String) extends CSVDB[AssetTask](file, enc) with AssetTasksDB {
+class JsonAssetTasksDB(file: String, enc: String) extends JsonDB[AssetTask](file, enc) with AssetTasksDB {
   def read(data: String) = parse[List[AssetTask]](data)
 }
 
-class CSVActivityDB(file: String, enc: String) extends CSVDB[HistoryEntry](file, enc) with ActivityDB {
+class JsonActivityDB(file: String, enc: String) extends JsonDB[HistoryEntry](file, enc) with ActivityDB {
   def read(data: String): List[HistoryEntry] =
     Json.parse(data).as[Seq[JsValue]].map(_.as[HistoryEntry](new HistoryEntryReads)).toList
 
