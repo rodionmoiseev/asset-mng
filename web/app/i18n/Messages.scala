@@ -22,6 +22,8 @@ trait Messages {
   def errors: Errors
 
   def views: Views
+
+  def activity: Activity
 }
 
 @C10NMessages
@@ -102,6 +104,10 @@ trait Asset {
   @En("Not used by anyone")
   @Ja("空いています")
   def available: String
+
+  @En("{0} asset")
+  @Ja("{0}アセット")
+  def describe(hostname: String): String
 }
 
 @C10NMessages
@@ -148,4 +154,23 @@ trait Errors {
   @Ja("<strong>アセット保存に失敗しました: </strong> " +
     "入力内容を修正し「保存」ボタンをクリックしてください")
   def formValidationError: String
+}
+
+@C10NMessages
+trait Activity {
+  @En("{0} has been {1}")
+  @Ja("{0}が{1}されました")
+  def log(obj: String, action: String): String
+
+  @En("added")
+  @Ja("追加")
+  def add: String
+
+  @En("modifed")
+  @Ja("編集")
+  def modify: String
+
+  @En("deleted")
+  @Ja("削除")
+  def delete: String
 }

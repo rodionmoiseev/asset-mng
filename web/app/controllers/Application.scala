@@ -16,6 +16,10 @@ object Application extends Controller {
     Ok(views.html.assets())
   }
 
+  def activity = Action {
+    Ok(views.html.activity())
+  }
+
   def index = Action {
     Redirect(routes.Application.assets())
   }

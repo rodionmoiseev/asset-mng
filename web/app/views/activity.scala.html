@@ -1,0 +1,28 @@
+@()(implicit m: i18n.Messages)
+
+@main("activity", "activity"){
+    <div>
+        <input type="text" size="30" class="search-query" placeholder="Filter"><i class="icon-search"></i>
+    </div>
+    <div id="activity-list">
+        <ul data-bind="foreach: activities">
+            <ul class="activity">
+                <div class="activity-controls" data-bind="click: $parent.undo">
+                    <a href="#"><i class="icon-backward"></i></a>
+                </div>
+                <div class="activity-message">
+                    @activityLog() {
+                        <span data-bind="text: obj"></span>
+                    } {
+                        <span class="label" data-bind="text: action"></span>
+                    }
+                </div>
+                <div class="activity-user">
+                    <i class="icon-user"></i>
+                    <span data-bind="text: user"></span>
+                    <span data-bind="text: date"></span>
+                </div>
+            </ul>
+        </ul>
+    </div>
+}

@@ -4,13 +4,14 @@ import com.codahale.jerkson.Json._
 import play.api.libs.json.Json.toJson
 
 import play.api.mvc._
-import models.Asset
+import models.{Delete, Add, HistoryEntry, Asset}
 import models.view.ViewAsset
 import controllers.IPUtils
 import play.api.data._
 import play.api.data.Forms._
 import i18n.Messages
 import dao.Module._
+import java.util
 
 /**
  *
@@ -62,7 +63,8 @@ object Assets extends Controller {
         case Some(json) => assetForm.bind(json).fold(
           errors => BadRequest(errors.errorsAsJson),
           viewAsset => {
-            assetsDB.save(form2asset(viewAsset))
+            val newAsset = assetsDB.save(form2asset(viewAsset))
+            activityDB.save(HistoryEntry(-1, "unknown", new util.Date, Add(), newAsset))
             Ok(generate(Map("status" -> m.views.assets.successfullyAdded,
               "asset" -> viewAsset)))
           }
@@ -75,7 +77,8 @@ object Assets extends Controller {
   }
 
   def delete(id: Long) = Action {
-    assetsDB.delete(id)
+    val deletedItem = assetsDB.delete(id)
+    activityDB.save(HistoryEntry(-1, "unknown", new util.Date, Delete(), deletedItem))
     Ok(toJson(Map("status" -> "OK")))
   }
 }

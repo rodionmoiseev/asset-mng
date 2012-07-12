@@ -66,3 +66,18 @@ class AM.AssetTaskGroupList
     ko.utils.arrayForEach @taskGroups(), (taskGroup) ->
       window.console.log("match taskGroup.asset.id=" + taskGroup.asset().id + " with task.asset_id=" + task.asset_id)
       if taskGroup.asset().id == task.asset_id then taskGroup.tasks.unshift new AM.AssetTask(task)
+
+class AM.Activity
+  constructor: (activity) ->
+    @user = activity.user
+    @action = activity.action
+    @obj = activity.obj
+    @date = activity.date
+
+class AM.ActivityList
+  constructor: (activities) ->
+    @activities = ko.observableArray([])
+    @activities($.map activities, (activity) -> new AM.Activity(activity))
+
+  undo: (activity) ->
+    window.console.log("Undoing: " + activity)

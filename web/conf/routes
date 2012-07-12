@@ -6,6 +6,7 @@
 GET     /                           controllers.Application.index
 GET     /assets                     controllers.Application.assets
 GET     /status                     controllers.Application.status
+GET     /activity                   controllers.Application.activity
 
 # Json Data Access
 GET     /dao/assets                 controllers.data.Assets.list
@@ -15,6 +16,8 @@ DELETE  /dao/assets/delete/:id      controllers.data.Assets.delete(id: Long)
 GET     /dao/tasks/groupedByAsset   controllers.data.AssetTasks.groupedByAsset
 POST    /dao/tasks/add              controllers.data.AssetTasks.add
 DELETE  /dao/tasks/delete/:id       controllers.data.AssetTasks.delete(id: Long)
+
+GET     /dao/activity               controllers.data.Activity.list
 
 # Map static resources from the /public folder to the /assets URL path
 GET     /assets/*file               controllers.Assets.at(path="/public", file)

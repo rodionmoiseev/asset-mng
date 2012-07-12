@@ -1,6 +1,6 @@
 package dao
 
-import filestorage.{CSVAssetsDB, CSVAssetTasksDB}
+import filestorage._
 import models.{Persistent, Asset, AssetTask}
 import java.util.concurrent.atomic.AtomicLong
 import collection.mutable
@@ -8,6 +8,7 @@ import collection.mutable
 object Module {
   implicit val assetTasksDB: AssetTasksDB = new CSVAssetTasksDB("db/tasks.csv", "UTF-8")
   implicit val assetsDB: AssetsDB = new CSVAssetsDB("db/assets.csv", "UTF-8")
+  implicit val activityDB: ActivityDB = new CSVActivityDB("db/activity.csv", "UTF-8")
 }
 
 class InMemoryDB[A <: Persistent[A]] extends DB[A] {
@@ -25,7 +26,7 @@ class InMemoryDB[A <: Persistent[A]] extends DB[A] {
     newItem
   }
 
-  def delete(id: Long) {
+  def delete(id: Long): A = {
     throw new UnsupportedOperationException("delete is not supported")
   }
 }

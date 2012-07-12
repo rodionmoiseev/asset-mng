@@ -10,5 +10,5 @@ trait DB[A] {
 
   def save(item: A): A
 
-  def delete(id: Long)
+  def delete(id: Long): A
 }
