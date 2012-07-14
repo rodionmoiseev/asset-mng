@@ -6,9 +6,9 @@ import java.util.concurrent.atomic.AtomicLong
 import collection.mutable
 
 object Module {
-  implicit val assetTasksDB: DB[AssetTask] = concurrent(new JsonAssetTasksDB("db/tasks.csv", "UTF-8"))
-  implicit val assetsDB: DB[Asset] = concurrent(new JsonAssetsDB("db/assets.csv", "UTF-8"))
-  implicit val activityDB: DB[HistoryEntry] = concurrent(new JsonActivityDB("db/activity.csv", "UTF-8"))
+  implicit val assetTasksDB: DB[AssetTask] = concurrent(new JsonAssetTasksDB("db/tasks.json", "UTF-8"))
+  implicit val assetsDB: DB[Asset] = concurrent(new JsonAssetsDB("db/assets.json", "UTF-8"))
+  implicit val activityDB: DB[HistoryEntry] = concurrent(new JsonActivityDB("db/activity.json", "UTF-8"))
 
   private def concurrent[A <: Persistent[A]](base: DB[A]): DB[A] = {
     new SingleThreadedDB[A](base)
