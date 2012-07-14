@@ -1,4 +1,4 @@
-@(title: String, page: String)(content: Html)(implicit m: i18n.Messages)
+@(user: Option[String], title: String, page: String = "")(content: Html)(implicit m: i18n.Messages)
 
 <html>
 <head>
@@ -10,7 +10,9 @@
     <script type="text/javascript" src='@routes.Assets.at("javascripts/bootstrap-typeahead.js")'></script>
     <script type="text/javascript" src='@routes.Assets.at("javascripts/model.js")'></script>
     <script type="text/javascript" src='@routes.Assets.at("javascripts/icons.js")'></script>
+    @if(!page.isEmpty){
     <script type="text/javascript" src='@routes.Assets.at("javascripts/"+page+".js")'></script>
+    }
 </head>
 <body>
 <div class="navbar">
@@ -30,6 +32,18 @@
                         <a href="/@link._2">@link._1</a>
                     </li>
                 }
+            </ul>
+            <ul class="nav pull-right">
+                <li>
+                @user match {
+                    case Some(name) => {
+                        <a href="@routes.Application.logout">@m.main.logoutLink(name)</a>
+                    }
+                    case None => {
+                        <a href="@routes.Application.login">@m.main.login</a>
+                    }
+                }
+                </li>
             </ul>
         </div>
     </div>

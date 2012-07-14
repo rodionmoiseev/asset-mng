@@ -1,6 +1,6 @@
-@()(implicit m: i18n.Messages)
+@(user: String)(implicit m: i18n.Messages)
 
-@main("assets", "assets"){
+@main(Some(user), "assets", "assets"){
     <div class="well">
         <div>
             <i class="icon-plus-sign"></i>

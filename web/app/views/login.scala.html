@@ -1,0 +1,15 @@
+@()(implicit m: i18n.Messages)
+
+@main(None, "login", "login"){
+    <div class="hero-unit">
+        <h1>@m.login.header</h1>
+        <p>@m.login.message</p>
+        <p>
+            <form action="/login" method="POST">
+                @m.login.userName
+                <input id="login-form-name" type="text" name="name" value="">
+                <input type="submit" class="btn btn-primary" value="@m.login.button">
+            </form>
+        </p>
+    </div>
+}

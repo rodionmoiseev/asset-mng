@@ -1,6 +1,6 @@
-@()(implicit m: i18n.Messages)
+@(user: String)(implicit m: i18n.Messages)
 
-@main("activity", "activity"){
+@main(Some(user), "activity", "activity"){
     <div>
         <input type="text" size="30" class="search-query" placeholder="Filter"><i class="icon-search"></i>
     </div>

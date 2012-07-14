@@ -12,6 +12,7 @@ import play.api.data.Forms._
 import i18n.Messages
 import dao.Module._
 import java.util
+import controllers.Application.AssetMngAction
 
 /**
  *
@@ -53,18 +54,19 @@ object Assets extends Controller {
     "parent_id" -> optional(longNumber))
     (AssetForm.apply)(AssetForm.unapply))
 
-  def list = Action {
-    Ok(generate(assetsDB.all map asset2view))
+  def list = AssetMngAction {
+    (user, request) =>
+      Ok(generate(assetsDB.all map asset2view))
   }
 
-  def add = Action {
-    implicit request =>
+  def add = AssetMngAction {
+    (user, request) =>
       request.body.asJson match {
         case Some(json) => assetForm.bind(json).fold(
           errors => BadRequest(errors.errorsAsJson),
           viewAsset => {
             val newAsset = assetsDB.save(form2asset(viewAsset))
-            activityDB.save(HistoryEntry(-1, "unknown", new util.Date, Add(), newAsset))
+            activityDB.save(HistoryEntry(-1, user, new util.Date, Add(), newAsset))
             Ok(generate(Map("status" -> m.views.assets.successfullyAdded,
               "asset" -> viewAsset)))
           }
@@ -76,9 +78,10 @@ object Assets extends Controller {
       }
   }
 
-  def delete(id: Long) = Action {
-    val deletedItem = assetsDB.delete(id)
-    activityDB.save(HistoryEntry(-1, "unknown", new util.Date, Delete(), deletedItem))
-    Ok(toJson(Map("status" -> "OK")))
+  def delete(id: Long) = AssetMngAction {
+    (user, request) =>
+      val deletedItem = assetsDB.delete(id)
+      activityDB.save(HistoryEntry(-1, user, new util.Date, Delete(), deletedItem))
+      Ok(toJson(Map("status" -> "OK")))
   }
 }

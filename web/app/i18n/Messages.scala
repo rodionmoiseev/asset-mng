@@ -13,6 +13,10 @@ object Messages {
 
 @C10NMessages
 trait Messages {
+  def main: Main
+
+  def login: Login
+
   def buttons: Buttons
 
   def asset: Asset
@@ -24,6 +28,36 @@ trait Messages {
   def views: Views
 
   def activity: Activity
+}
+
+@C10NMessages
+trait Main{
+  @En("Logout ({0})")
+  @Ja("ログアウト ({0})")
+  def logoutLink(userName: String): String
+
+  @En("Login")
+  @Ja("ログイン")
+  def login: String
+}
+
+@C10NMessages
+trait Login{
+  @En("Asset Manager")
+  @Ja("Asset Manager")
+  def header: String
+
+  @En("Please log-in")
+  @Ja("ログインしてください")
+  def message: String
+
+  @En("User name")
+  @Ja("ユーザ名")
+  def userName: String
+
+  @En("Login")
+  @Ja("ログイン")
+  def button: String
 }
 
 @C10NMessages

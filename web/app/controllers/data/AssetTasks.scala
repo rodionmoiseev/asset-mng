@@ -11,6 +11,7 @@ import models.view._
 import models._
 import i18n.Messages
 import dao.Module._
+import controllers.Application.AssetMngAction
 
 /**
  *
@@ -55,16 +56,17 @@ object AssetTasks extends Controller {
   def asTaskGroup = (entry: (Asset, List[AssetTask])) =>
     ViewAssetTaskGroup(Assets.asset2view(entry._1), entry._2 map task2view)
 
-  def groupedByAsset = Action {
-    val tasks = assetTasksDB.all
-    val groups = assetsDB.all map {
-      (asset) => (asset, tasks.filter((task) => task.asset_id == asset.id))
-    }
-    Ok(generate(groups map asTaskGroup))
+  def groupedByAsset = AssetMngAction {
+    (user, request) =>
+      val tasks = assetTasksDB.all
+      val groups = assetsDB.all map {
+        (asset) => (asset, tasks.filter((task) => task.asset_id == asset.id))
+      }
+      Ok(generate(groups map asTaskGroup))
   }
 
-  def add = Action {
-    implicit request =>
+  def add = AssetMngAction {
+    (user, request) =>
       request.body.asJson match {
         case Some(json) => taskForm.bind(json).fold(
           errors => BadRequest(errors.errorsAsJson),
@@ -81,8 +83,9 @@ object AssetTasks extends Controller {
       }
   }
 
-  def delete(id: Long) = Action {
-    assetTasksDB.delete(id)
-    Ok(toJson(Map("status" -> "OK")))
+  def delete(id: Long) = AssetMngAction {
+    (user, request) =>
+      assetTasksDB.delete(id)
+      Ok(toJson(Map("status" -> "OK")))
   }
 }
