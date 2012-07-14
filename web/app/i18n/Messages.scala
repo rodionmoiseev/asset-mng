@@ -31,7 +31,7 @@ trait Messages {
 }
 
 @C10NMessages
-trait Main{
+trait Main {
   @En("Logout ({0})")
   @Ja("ログアウト ({0})")
   def logoutLink(userName: String): String
@@ -42,7 +42,7 @@ trait Main{
 }
 
 @C10NMessages
-trait Login{
+trait Login {
   @En("Asset Manager")
   @Ja("Asset Manager")
   def header: String
@@ -61,8 +61,9 @@ trait Login{
 }
 
 @C10NMessages
-trait Views{
+trait Views {
   def assets: Assets
+
   def tasks: Tasks
 }
 
@@ -169,6 +170,10 @@ trait Task {
   @En("Icons")
   @Ja("アイコン")
   def icons: String
+
+  @En("Task \"{0} ...\"")
+  @Ja("\"{0} ...\"タスク")
+  def describe(briefDescription: String): String
 }
 
 @C10NMessages

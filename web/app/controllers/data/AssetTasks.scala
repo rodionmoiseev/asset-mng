@@ -72,6 +72,7 @@ object AssetTasks extends Controller {
           errors => BadRequest(errors.errorsAsJson),
           viewTask => {
             val newTask = assetTasksDB.save(form2task(viewTask))
+            activityDB.save(new HistoryEntry(-1, user, new Date, Add(), newTask))
             Ok(generate(Map("status" -> m.views.tasks.successfullyAdded,
               "task" -> task2view(newTask))))
           }
@@ -85,7 +86,8 @@ object AssetTasks extends Controller {
 
   def delete(id: Long) = AssetMngAction {
     (user, request) =>
-      assetTasksDB.delete(id)
+      val oldTask = assetTasksDB.delete(id)
+      activityDB.save(new HistoryEntry(-1, user, new Date, Delete(), oldTask))
       Ok(toJson(Map("status" -> "OK")))
   }
 }

@@ -128,5 +128,6 @@ class HistoryObjectWrites extends Writes[HistoryObject] {
 class HistoryObjectReads extends Reads[HistoryObject] {
   def reads(json: JsValue) = (json \ "type").as[String] match {
     case "asset" => parse[Asset]((json \ "obj").as[String])
+    case "task" => parse[AssetTask]((json \ "obj").as[String])
   }
 }

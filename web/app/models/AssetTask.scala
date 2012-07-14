@@ -1,6 +1,7 @@
 package models
 
 import java.util.Date
+import i18n.Messages
 
 /**
  *
@@ -13,7 +14,12 @@ case class AssetTask(id: Long,
                      description: String,
                      date: Date,
                      tags: List[String],
-                     icons: List[String]) extends Persistent[AssetTask] {
+                     icons: List[String]) extends HistoryObject with Persistent[AssetTask] {
   def withId(id: Long) = copy(id)
+
   def dateStr = "%1$tm/%1$td %1$tH:%1$tM".format(date)
+
+  def describe(implicit m: Messages) = m.task.describe(description.takeWhile {
+    _ != '\n'
+  } take (30))
 }
