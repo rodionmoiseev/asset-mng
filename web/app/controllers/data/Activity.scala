@@ -16,7 +16,8 @@ object Activity extends Controller {
   def activity2view = (entry: HistoryEntry) =>
     ViewHistoryEntry(entry.id, entry.user, entry.dateStr, entry.action.localise, entry.obj.describe)
 
-  def list = AssetMngAction { (user, request) =>
-    Ok(generate(activityDB.all.reverse map activity2view))
+  def list = AssetMngAction {
+    (user, request) =>
+      Ok(generate(activityDB.all.reverse map activity2view))
   }
 }

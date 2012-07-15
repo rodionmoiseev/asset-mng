@@ -1,6 +1,5 @@
 package models.view
 
-import models.HistoryAction
 
 /**
  *

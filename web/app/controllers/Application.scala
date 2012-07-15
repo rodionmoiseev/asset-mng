@@ -66,7 +66,7 @@ object Application extends Controller {
           request.session +("user", user))
         ).getOrElse {
           Redirect(routes.Application.login()).withSession(
-            request.session + ("logst_referer", request.uri)
+            request.session +("logst_referer", request.uri)
           )
         }
     }

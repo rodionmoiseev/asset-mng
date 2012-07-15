@@ -6,4 +6,4 @@ package models.view
  */
 
 case class ViewAssetTaskGroup(asset: ViewAsset,
-                               tasks: List[ViewAssetTask])
+                              tasks: List[ViewAssetTask])

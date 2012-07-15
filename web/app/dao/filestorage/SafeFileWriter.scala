@@ -14,8 +14,8 @@ class SafeFileWriter(val path: String, val enc: String) {
   val bak = new File(file.getParentFile, file.getName + ".bak")
 
   def write(data: String) {
-    if(!file.getParentFile.exists)
-      if(!file.getParentFile.mkdirs)
+    if (!file.getParentFile.exists)
+      if (!file.getParentFile.mkdirs)
         throw new IOException("Could not created db directory: " + file.getParentFile)
     init
     FileUtils.write(tmp, data, enc)

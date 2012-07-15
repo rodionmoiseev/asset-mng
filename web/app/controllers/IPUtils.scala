@@ -1,6 +1,5 @@
 package controllers
 
-import java.net.{InetAddress, Inet6Address, Inet4Address}
 import sun.net.util.IPAddressUtil
 
 
@@ -18,7 +17,7 @@ object IPUtils {
   def isIPAddress(ip: String): Boolean = {
     ip != null && (
       IPAddressUtil.isIPv4LiteralAddress(ip) ||
-      IPAddressUtil.isIPv6LiteralAddress(ip)
-    )
+        IPAddressUtil.isIPv6LiteralAddress(ip)
+      )
   }
 }

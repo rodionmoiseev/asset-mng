@@ -7,5 +7,6 @@ package models
 
 trait Persistent[A] {
   def id: Long
+
   def withId(id: Long): A
 }
