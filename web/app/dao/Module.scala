@@ -1,14 +1,18 @@
 package dao
 
 import filestorage._
-import models.{HistoryEntry, Persistent, Asset, AssetTask}
+import models._
 import java.util.concurrent.atomic.AtomicLong
 import collection.mutable
+import models.Asset
+import models.HistoryEntry
+import models.AssetTask
 
 object Module {
-  implicit val assetTasksDB: DB[AssetTask] = concurrent(new JsonAssetTasksDB("db/tasks.json", "UTF-8"))
-  implicit val assetsDB: DB[Asset] = concurrent(new JsonAssetsDB("db/assets.json", "UTF-8"))
-  implicit val activityDB: DB[HistoryEntry] = concurrent(new JsonActivityDB("db/activity.json", "UTF-8"))
+  private val uidDB: DB[UniqueId] = concurrent(new JsonUniqueUniqueIdDB("db/uid.json", "UTF-8"))
+  implicit val assetTasksDB: DB[AssetTask] = concurrent(new JsonAssetTasksDB("db/tasks.json", "UTF-8", uidDB))
+  implicit val assetsDB: DB[Asset] = concurrent(new JsonAssetsDB("db/assets.json", "UTF-8", uidDB))
+  implicit val activityDB: DB[HistoryEntry] = concurrent(new JsonActivityDB("db/activity.json", "UTF-8", uidDB))
 
   private def concurrent[A <: Persistent[A]](base: DB[A]): DB[A] = {
     new SingleThreadedDB[A](base)

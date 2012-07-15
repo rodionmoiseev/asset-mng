@@ -22,7 +22,7 @@ import java.util.Date
 
 abstract class JsonDB[A <: Persistent[A]](val file: String, val enc: String) extends DB[A] {
   val frw = new SafeFileWriter(file, enc)
-  private val items: ListBuffer[A] = new ListBuffer[A]
+  protected val items: ListBuffer[A] = new ListBuffer[A]
   private var synced = false
 
   def all: List[A] = {
@@ -42,9 +42,9 @@ abstract class JsonDB[A <: Persistent[A]](val file: String, val enc: String) ext
   }
 
   def save(item: A): A = {
-    val newItem = item.withId(items.length)
+    val newItem = item.withId(nextUniqueId)
     items += newItem
-    write()
+    flush()
     newItem
   }
 
@@ -52,28 +52,53 @@ abstract class JsonDB[A <: Persistent[A]](val file: String, val enc: String) ext
     val item = items.remove(items.indexWhere {
       _.id == id
     })
-    write()
+    flush()
     item
   }
 
-  private def write() {
+  protected def flush() {
     frw.write(write(items.toList))
   }
+
+  def nextUniqueId: Long
 
   def write(data: List[A]): String = generate(data)
 
   def read(data: String): List[A]
 }
 
-class JsonAssetsDB(file: String, enc: String) extends JsonDB[Asset](file, enc) with AssetsDB {
+abstract class JsonDBWithIdProvider[A <: Persistent[A]](file: String, enc: String, val idProvider: DB[UniqueId])
+  extends JsonDB[A](file, enc) {
+  def nextUniqueId = {
+    val nextId = idProvider.all.head.id
+    idProvider.save(new UniqueId(nextId + 1))
+    nextId
+  }
+}
+
+class JsonUniqueUniqueIdDB(file: String, enc: String) extends JsonDB[UniqueId](file, enc) with UniqueIdDB {
+  items += new UniqueId(0)
+
+  def read(data: String) = parse[List[UniqueId]](data)
+
+  def nextUniqueId = all.head.id
+
+  override def save(newItem: UniqueId) = {
+    items.update(0, newItem)
+    flush()
+    newItem
+  }
+}
+
+class JsonAssetsDB(file: String, enc: String, idProvider: DB[UniqueId]) extends JsonDBWithIdProvider[Asset](file, enc, idProvider) with AssetsDB {
   def read(data: String) = parse[List[Asset]](data)
 }
 
-class JsonAssetTasksDB(file: String, enc: String) extends JsonDB[AssetTask](file, enc) with AssetTasksDB {
+class JsonAssetTasksDB(file: String, enc: String, idProvider: DB[UniqueId]) extends JsonDBWithIdProvider[AssetTask](file, enc, idProvider) with AssetTasksDB {
   def read(data: String) = parse[List[AssetTask]](data)
 }
 
-class JsonActivityDB(file: String, enc: String) extends JsonDB[HistoryEntry](file, enc) with ActivityDB {
+class JsonActivityDB(file: String, enc: String, idProvider: DB[UniqueId]) extends JsonDBWithIdProvider[HistoryEntry](file, enc, idProvider) with ActivityDB {
   def read(data: String): List[HistoryEntry] =
     Json.parse(data).as[Seq[JsValue]].map(_.as[HistoryEntry](new HistoryEntryReads)).toList
 
@@ -128,6 +153,6 @@ class HistoryObjectWrites extends Writes[HistoryObject] {
 class HistoryObjectReads extends Reads[HistoryObject] {
   def reads(json: JsValue) = (json \ "type").as[String] match {
     case "asset" => parse[Asset]((json \ "obj").as[String])
-    case "task" => parse[AssetTask]((json \ "obj").as[String])
+    case "assettask" => parse[AssetTask]((json \ "obj").as[String])
   }
 }
