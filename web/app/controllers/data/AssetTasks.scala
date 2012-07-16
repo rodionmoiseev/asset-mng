@@ -74,10 +74,9 @@ object AssetTasks extends Controller {
         case Some(json) => taskForm.bind(json).fold(
           errors => BadRequest(errors.errorsAsJson),
           viewTask => {
-            val newTask = assetTasksDB.save(form2task(viewTask))
-            activityDB.save(new HistoryEntry(DB.NEW_ID, user, new Date, Add(), newTask))
+            val hist = addTask(form2task(viewTask), user)
             Ok(generate(Map("status" -> m.views.tasks.successfullyAdded,
-              "task" -> task2view(newTask))))
+              "task" -> task2view(hist.obj.asInstanceOf[AssetTask]))))
           }
         )
         case None => BadRequest(toJson(
@@ -87,14 +86,19 @@ object AssetTasks extends Controller {
       }
   }
 
+  def addTask(task: AssetTask, user: String, action: HistoryAction = Add()): HistoryEntry = {
+    val newTask = assetTasksDB.save(task)
+    activityDB.save(new HistoryEntry(DB.NEW_ID, user, new Date, Add(), newTask))
+  }
+
   def delete(id: Long) = AssetMngAction {
     (user, request) =>
       deleteTask(id, user)
       Ok(toJson(Map("status" -> "OK")))
   }
 
-  def deleteTask(id: Long, user: String){
+  def deleteTask(id: Long, user: String, action: HistoryAction = Delete()): HistoryEntry = {
     val oldTask = assetTasksDB.delete(id)
-    activityDB.save(new HistoryEntry(DB.NEW_ID, user, new Date, Delete(), oldTask))
+    activityDB.save(new HistoryEntry(DB.NEW_ID, user, new Date, action, oldTask))
   }
 }

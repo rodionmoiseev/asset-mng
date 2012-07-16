@@ -49,11 +49,10 @@ object Activity extends Controller {
       val newHistoryEntry = activityDB.all.find( (entry) => entry.id == id && canUndo(entry) ) match {
         case Some(entry) => {
           entry.action match {
-            case Add() => delete(entry)
-            case Delete() => add(entry)
-            case _ =>
+            case Add() => delete(entry, user)
+            case Delete() => add(entry, user)
+            case _ => None
           }
-          Some(activityDB.save(new HistoryEntry(DB.NEW_ID, user, new Date, Undo(entry.action), entry.obj)))
         }
         case _ => None
       }
@@ -65,18 +64,19 @@ object Activity extends Controller {
       }
   }
 
-  private def delete(entry: HistoryEntry) {
+  private def delete(entry: HistoryEntry, user: String): Option[HistoryEntry] = {
     entry.obj match {
-      case obj: Asset => assetsDB.delete(obj.id)
-      case obj: AssetTask => assetTasksDB.delete(obj.id)
-      case _ =>
+      case obj: Asset => Some(Assets.deleteAsset(obj.id, user, Undo(entry.action)))
+      case obj: AssetTask => Some(AssetTasks.deleteTask(obj.id, user, Undo(entry.action)))
+      case _ => None
     }
   }
 
-  private def add(entry: HistoryEntry) {
+  private def add(entry: HistoryEntry, user: String): Option[HistoryEntry] = {
     entry.obj match {
-      case obj: Asset => assetsDB.save(obj)
-      case obj: AssetTask => assetTasksDB.save(obj)
+      case obj: Asset => Some(Assets.addAsset(obj, user, Undo(entry.action)))
+      case obj: AssetTask => Some(AssetTasks.addTask(obj, user, Undo(entry.action)))
+      case _ => None
     }
   }
 }

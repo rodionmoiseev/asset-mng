@@ -4,7 +4,7 @@ import com.codahale.jerkson.Json._
 import play.api.libs.json.Json.toJson
 
 import play.api.mvc._
-import models.{Delete, Add, HistoryEntry, Asset}
+import models._
 import models.view.ViewAsset
 import controllers.IPUtils
 import play.api.data._
@@ -14,6 +14,12 @@ import dao.Module._
 import java.util
 import controllers.Application.AssetMngAction
 import dao.DB
+import models.Asset
+import models.HistoryEntry
+import scala.Some
+import models.Delete
+import view.ViewAsset
+import models.Add
 
 /**
  *
@@ -66,10 +72,9 @@ object Assets extends Controller {
         case Some(json) => assetForm.bind(json).fold(
           errors => BadRequest(errors.errorsAsJson),
           viewAsset => {
-            val newAsset = assetsDB.save(form2asset(viewAsset))
-            activityDB.save(HistoryEntry(DB.NEW_ID, user, new util.Date, Add(), newAsset))
+            val hist = addAsset(form2asset(viewAsset), user)
             Ok(generate(Map("status" -> m.views.assets.successfullyAdded,
-              "asset" -> viewAsset)))
+              "asset" -> asset2view(hist.obj.asInstanceOf[Asset]))))
           }
         )
         case None => BadRequest(toJson(
@@ -79,16 +84,24 @@ object Assets extends Controller {
       }
   }
 
+  def addAsset(asset: Asset, user: String, action: HistoryAction = Add()): HistoryEntry = {
+    val newAsset = assetsDB.save(asset)
+    activityDB.save(HistoryEntry(DB.NEW_ID, user, new util.Date, action, newAsset))
+  }
+
   def delete(id: Long) = AssetMngAction {
     (user, request) =>
-      val deletedItem = assetsDB.delete(id)
-      assetTasksDB.all.filter(_.asset_id == id).foreach {
-        (task) => {
-          println("transitively removing task: " + task.id)
-          AssetTasks.deleteTask(task.id, user)
-        }
-      }
-      activityDB.save(HistoryEntry(DB.NEW_ID, user, new util.Date, Delete(), deletedItem))
+      deleteAsset(id, user)
       Ok(toJson(Map("status" -> "OK")))
+  }
+
+  def deleteAsset(id: Long, user: String, action: HistoryAction = Delete()): HistoryEntry = {
+    val deletedItem = assetsDB.delete(id)
+    assetTasksDB.all.filter(_.asset_id == id).foreach {
+      (task) => {
+        AssetTasks.deleteTask(task.id, user, action)
+      }
+    }
+    activityDB.save(HistoryEntry(DB.NEW_ID, user, new util.Date, action, deletedItem))
   }
 }
