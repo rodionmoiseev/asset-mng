@@ -19,7 +19,5 @@ case class AssetTask(id: Long,
 
   def dateStr = "%1$tm/%1$td %1$tH:%1$tM".format(date)
 
-  def describe(implicit m: Messages) = m.task.describe(description.takeWhile {
-    _ != '\n'
-  } take (30))
+  def describe(implicit m: Messages) = m.task.describe(user, description.replaceAllLiterally("\n", " ").take(50))
 }

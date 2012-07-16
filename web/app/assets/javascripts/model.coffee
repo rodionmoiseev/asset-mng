@@ -69,15 +69,27 @@ class AM.AssetTaskGroupList
 
 class AM.Activity
   constructor: (activity) ->
+    @id = activity.id
     @user = activity.user
     @action = activity.action
     @obj = activity.obj
     @date = activity.date
+    @canUndo = activity.canUndo
 
 class AM.ActivityList
   constructor: (activities) ->
     @activities = ko.observableArray([])
     @activities($.map activities, (activity) -> new AM.Activity(activity))
 
-  undo: (activity) ->
-    window.console.log("Undoing: " + activity)
+  undo: (activity) =>
+    $.ajax
+      url: '/dao/activity/undo/' + activity.id
+      type: 'POST'
+      success: (response) =>
+        r = JSON.parse(response)
+        @addActivity r.activity
+      error: (jqXHR) =>
+        window.console.log(jqXHR.responseText)
+
+  addActivity: (activity) ->
+    @activities.unshift new AM.Activity(activity)

@@ -21,6 +21,7 @@ POST    /dao/tasks/add              controllers.data.AssetTasks.add
 DELETE  /dao/tasks/delete/:id       controllers.data.AssetTasks.delete(id: Long)
 
 GET     /dao/activity               controllers.data.Activity.list
+POST    /dao/activity/undo/:id      controllers.data.Activity.undo(id: Long)
 
 # Map static resources from the /public folder to the /assets URL path
 GET     /assets/*file               controllers.Assets.at(path="/public", file)

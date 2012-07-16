@@ -9,14 +9,19 @@ import models.HistoryEntry
 import models.AssetTask
 
 object Module {
-  private val uidDB: DB[UniqueId] = concurrent(new JsonUniqueUniqueIdDB("db/uid.json", "UTF-8"))
-  implicit val assetTasksDB: DB[AssetTask] = concurrent(new JsonAssetTasksDB("db/tasks.json", "UTF-8", uidDB))
-  implicit val assetsDB: DB[Asset] = concurrent(new JsonAssetsDB("db/assets.json", "UTF-8", uidDB))
-  implicit val activityDB: DB[HistoryEntry] = concurrent(new JsonActivityDB("db/activity.json", "UTF-8", uidDB))
+  private val uidProvider: UIDProvider = new MillisecBasedUIDProvider
+  implicit val assetTasksDB: DB[AssetTask] = concurrent(new JsonAssetTasksDB("db/tasks.json", "UTF-8", uidProvider))
+  implicit val assetsDB: DB[Asset] = concurrent(new JsonAssetsDB("db/assets.json", "UTF-8", uidProvider))
+  implicit val activityDB: DB[HistoryEntry] = concurrent(new JsonActivityDB("db/activity.json", "UTF-8", uidProvider))
 
   private def concurrent[A <: Persistent[A]](base: DB[A]): DB[A] = {
     new SingleThreadedDB[A](base)
   }
+}
+
+class MillisecBasedUIDProvider extends UIDProvider{
+  val uid: AtomicLong = new AtomicLong(System.currentTimeMillis())
+  def nextUID = uid.getAndIncrement()
 }
 
 class InMemoryDB[A <: Persistent[A]] extends DB[A] {

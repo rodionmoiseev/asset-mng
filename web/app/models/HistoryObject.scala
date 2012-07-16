@@ -8,5 +8,7 @@ import i18n.Messages
  */
 
 abstract class HistoryObject {
+  def id: Long
+
   def describe(implicit m: Messages): String
 }

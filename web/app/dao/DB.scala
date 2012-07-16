@@ -12,3 +12,7 @@ trait DB[A] {
 
   def delete(id: Long): A
 }
+
+object DB {
+  val NEW_ID = -1L
+}

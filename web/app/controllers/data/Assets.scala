@@ -13,6 +13,7 @@ import i18n.Messages
 import dao.Module._
 import java.util
 import controllers.Application.AssetMngAction
+import dao.DB
 
 /**
  *
@@ -33,7 +34,7 @@ object Assets extends Controller {
 
   def form2asset = (asset: AssetForm) =>
     Asset(
-      -1L,
+      DB.NEW_ID,
       asset.hostname,
       asset.ip,
       asset.description,
@@ -66,7 +67,7 @@ object Assets extends Controller {
           errors => BadRequest(errors.errorsAsJson),
           viewAsset => {
             val newAsset = assetsDB.save(form2asset(viewAsset))
-            activityDB.save(HistoryEntry(-1, user, new util.Date, Add(), newAsset))
+            activityDB.save(HistoryEntry(DB.NEW_ID, user, new util.Date, Add(), newAsset))
             Ok(generate(Map("status" -> m.views.assets.successfullyAdded,
               "asset" -> viewAsset)))
           }
@@ -81,7 +82,13 @@ object Assets extends Controller {
   def delete(id: Long) = AssetMngAction {
     (user, request) =>
       val deletedItem = assetsDB.delete(id)
-      activityDB.save(HistoryEntry(-1, user, new util.Date, Delete(), deletedItem))
+      assetTasksDB.all.filter(_.asset_id == id).foreach {
+        (task) => {
+          println("transitively removing task: " + task.id)
+          AssetTasks.deleteTask(task.id, user)
+        }
+      }
+      activityDB.save(HistoryEntry(DB.NEW_ID, user, new util.Date, Delete(), deletedItem))
       Ok(toJson(Map("status" -> "OK")))
   }
 }

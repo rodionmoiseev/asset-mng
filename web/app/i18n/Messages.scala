@@ -171,9 +171,9 @@ trait Task {
   @Ja("アイコン")
   def icons: String
 
-  @En("Task \"{0} ...\"")
-  @Ja("\"{0} ...\"タスク")
-  def describe(briefDescription: String): String
+  @En("Task \"{1} ...\" by {0}")
+  @Ja("{0}さんの\"{1} ...\"タスク")
+  def describe(user: String, briefDescription: String): String
 }
 
 @C10NMessages
@@ -203,13 +203,41 @@ trait Activity {
 
   @En("added")
   @Ja("追加")
-  def add: String
+  def added: String
 
-  @En("modifed")
+  @En("addition")
+  @Ja("追加")
+  def addition: String
+
+  @En("modified")
   @Ja("編集")
-  def modify: String
+  def modified: String
+
+  @En("modification")
+  @Ja("編集")
+  def modification: String
 
   @En("deleted")
   @Ja("削除")
-  def delete: String
+  def deleted: String
+
+  @En("deletion")
+  @Ja("削除")
+  def deletion: String
+
+  @En("undone")
+  @Ja("{0}のUNDO")
+  def undone(action: String): String
+
+  @En("undo")
+  @Ja("UNDO")
+  def undo: String
+
+  @En("asset")
+  @Ja("アセット")
+  def assetEntry: String
+
+  @En("task")
+  @Ja("タスク")
+  def assetTaskEntry: String
 }

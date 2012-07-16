@@ -20,7 +20,7 @@ import java.util.Date
  * @author rodion
  */
 
-abstract class JsonDB[A <: Persistent[A]](val file: String, val enc: String) extends DB[A] {
+abstract class JsonDB[A <: Persistent[A]](val file: String, val enc: String, val uidProvider: UIDProvider) extends DB[A] {
   val frw = new SafeFileWriter(file, enc)
   protected val items: ListBuffer[A] = new ListBuffer[A]
   private var synced = false
@@ -42,7 +42,11 @@ abstract class JsonDB[A <: Persistent[A]](val file: String, val enc: String) ext
   }
 
   def save(item: A): A = {
-    val newItem = item.withId(nextUniqueId)
+    val newItem = item.id match {
+      case DB.NEW_ID => item.withId(uidProvider.nextUID)
+      //Keep the old uid (mainly needed when reverting delete)
+      case _ => item
+    }
     items += newItem
     flush()
     newItem
@@ -60,45 +64,20 @@ abstract class JsonDB[A <: Persistent[A]](val file: String, val enc: String) ext
     frw.write(write(items.toList))
   }
 
-  def nextUniqueId: Long
-
   def write(data: List[A]): String = generate(data)
 
   def read(data: String): List[A]
 }
 
-abstract class JsonDBWithIdProvider[A <: Persistent[A]](file: String, enc: String, val idProvider: DB[UniqueId])
-  extends JsonDB[A](file, enc) {
-  def nextUniqueId = {
-    val nextId = idProvider.all.head.id
-    idProvider.save(new UniqueId(nextId + 1))
-    nextId
-  }
-}
-
-class JsonUniqueUniqueIdDB(file: String, enc: String) extends JsonDB[UniqueId](file, enc) with UniqueIdDB {
-  items += new UniqueId(0)
-
-  def read(data: String) = parse[List[UniqueId]](data)
-
-  def nextUniqueId = all.head.id
-
-  override def save(newItem: UniqueId) = {
-    items.update(0, newItem)
-    flush()
-    newItem
-  }
-}
-
-class JsonAssetsDB(file: String, enc: String, idProvider: DB[UniqueId]) extends JsonDBWithIdProvider[Asset](file, enc, idProvider) with AssetsDB {
+class JsonAssetsDB(file: String, enc: String, idProvider: UIDProvider) extends JsonDB[Asset](file, enc, idProvider) with AssetsDB {
   def read(data: String) = parse[List[Asset]](data)
 }
 
-class JsonAssetTasksDB(file: String, enc: String, idProvider: DB[UniqueId]) extends JsonDBWithIdProvider[AssetTask](file, enc, idProvider) with AssetTasksDB {
+class JsonAssetTasksDB(file: String, enc: String, idProvider: UIDProvider) extends JsonDB[AssetTask](file, enc, idProvider) with AssetTasksDB {
   def read(data: String) = parse[List[AssetTask]](data)
 }
 
-class JsonActivityDB(file: String, enc: String, idProvider: DB[UniqueId]) extends JsonDBWithIdProvider[HistoryEntry](file, enc, idProvider) with ActivityDB {
+class JsonActivityDB(file: String, enc: String, idProvider: UIDProvider) extends JsonDB[HistoryEntry](file, enc, idProvider) with ActivityDB {
   def read(data: String): List[HistoryEntry] =
     Json.parse(data).as[Seq[JsValue]].map(_.as[HistoryEntry](new HistoryEntryReads)).toList
 
@@ -131,8 +110,16 @@ class HistoryEntryReads extends Reads[HistoryEntry] {
 
 class HistoryActionWrites extends Writes[HistoryAction] {
   def writes(action: HistoryAction) = Json.toJson(Map(
-    "type" -> action.getClass.getSimpleName.toLowerCase
+    "type" -> toJson(action.getClass.getSimpleName.toLowerCase),
+    "undoAction" -> undoAction(action)
   ))
+
+  def undoAction(action: HistoryAction): JsValue = {
+    action match {
+      case undoAction: Undo => writes(undoAction.action)
+      case _ => JsNull
+    }
+  }
 }
 
 class HistoryActionReads extends Reads[HistoryAction] {
@@ -140,19 +127,43 @@ class HistoryActionReads extends Reads[HistoryAction] {
     case "add" => Add()
     case "modify" => Modify()
     case "delete" => Delete()
+    case "undo" => Undo(reads(json \ "undoAction"))
   }
 }
 
 class HistoryObjectWrites extends Writes[HistoryObject] {
   def writes(obj: HistoryObject) = Json.toJson(Map(
     "type" -> toJson(obj.getClass.getSimpleName.toLowerCase),
-    "obj" -> toJson(generate(obj))
+    "obj" -> obj2json(obj)
   ))
+
+  private def obj2json(obj: HistoryObject): JsValue = {
+    obj match {
+      case undoEntry: UndoEntry => toJson(undoEntry)(new UndoEntryWrites)
+      case _ => toJson(generate(obj))
+    }
+  }
 }
 
 class HistoryObjectReads extends Reads[HistoryObject] {
   def reads(json: JsValue) = (json \ "type").as[String] match {
     case "asset" => parse[Asset]((json \ "obj").as[String])
     case "assettask" => parse[AssetTask]((json \ "obj").as[String])
+    case "undoentry" => json.as[UndoEntry](new UndoEntryReads)
   }
+}
+
+class UndoEntryWrites extends Writes[UndoEntry] {
+  def writes(undoEntry: UndoEntry) = Json.toJson(Map(
+    "entryType" -> toJson(undoEntry.entryType.getClass.getSimpleName.toLowerCase)
+  ))
+}
+
+class UndoEntryReads extends Reads[UndoEntry] {
+  def reads(json: JsValue) = UndoEntry(
+    (json \ "entryType").as[String] match {
+      case "assetentry" => AssetEntry()
+      case "assettaskentry" => AssetTaskEntry()
+    }
+  )
 }

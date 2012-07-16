@@ -7,9 +7,11 @@
     <div id="activity-list">
         <ul data-bind="foreach: activities">
             <ul class="activity">
+                <!-- ko if: canUndo -->
                 <div class="activity-controls" data-bind="click: $parent.undo">
                     <a href="#"><i class="icon-backward"></i></a>
                 </div>
+                <!-- /ko -->
                 <div class="activity-message">
                     @activityLog() {
                         <span data-bind="text: obj"></span>

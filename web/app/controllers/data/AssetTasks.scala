@@ -12,6 +12,7 @@ import models._
 import i18n.Messages
 import dao.Module._
 import controllers.Application.AssetMngAction
+import dao.DB
 
 /**
  *
@@ -35,7 +36,9 @@ object AssetTasks extends Controller {
     ViewAssetTask(task.id, task.asset_id, task.user, task.description, task.dateStr, task.tags, task.icons)
 
   def form2task = (taskForm: AssetTaskForm) =>
-    AssetTask(-1L, taskForm.asset_id,
+    AssetTask(
+      DB.NEW_ID,
+      taskForm.asset_id,
       taskForm.user,
       taskForm.description,
       new Date,
@@ -72,7 +75,7 @@ object AssetTasks extends Controller {
           errors => BadRequest(errors.errorsAsJson),
           viewTask => {
             val newTask = assetTasksDB.save(form2task(viewTask))
-            activityDB.save(new HistoryEntry(-1, user, new Date, Add(), newTask))
+            activityDB.save(new HistoryEntry(DB.NEW_ID, user, new Date, Add(), newTask))
             Ok(generate(Map("status" -> m.views.tasks.successfullyAdded,
               "task" -> task2view(newTask))))
           }
@@ -86,8 +89,12 @@ object AssetTasks extends Controller {
 
   def delete(id: Long) = AssetMngAction {
     (user, request) =>
-      val oldTask = assetTasksDB.delete(id)
-      activityDB.save(new HistoryEntry(-1, user, new Date, Delete(), oldTask))
+      deleteTask(id, user)
       Ok(toJson(Map("status" -> "OK")))
+  }
+
+  def deleteTask(id: Long, user: String){
+    val oldTask = assetTasksDB.delete(id)
+    activityDB.save(new HistoryEntry(DB.NEW_ID, user, new Date, Delete(), oldTask))
   }
 }
