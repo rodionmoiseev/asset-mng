@@ -1,5 +1,7 @@
 apply plugin: 'idea-scala-facet'
 
+version = '0.1-rc1'
+
 def findPlay20(){
   def pathEnvName = ['PATH', 'Path'].find{ System.getenv()[it] != null }
   for(path in System.getenv()[pathEnvName].split(File.pathSeparator)){
@@ -82,6 +84,10 @@ task "playCompile" (type: Exec, dependsOn: copyPlayLibs) {
 
 task "playClean" (type: Exec) { 
   commandLine playExec, 'clean'
+}
+
+task "playStage" (type: Exec, dependsOn: copyPlayLibs) { 
+  commandLine playExec, 'clean', 'compile', 'stage'
 }
 
 sourceSets.main{
