@@ -65,10 +65,16 @@ trait Views {
   def assets: Assets
 
   def tasks: Tasks
+
+  def activity: ActivityView
 }
 
 @C10NMessages
 trait Assets {
+  @En("Manage Assets")
+  @Ja("アセット管理")
+  def title: String
+
   @En("Add new asset")
   @Ja("新規アセット追加")
   def addAsset: String
@@ -84,6 +90,10 @@ trait Assets {
 
 @C10NMessages
 trait Tasks {
+  @En("Tasks")
+  @Ja("タスク")
+  def title: String
+
   @En("Add Task")
   @Ja("タスク追加")
   def addTask: String
@@ -91,6 +101,13 @@ trait Tasks {
   @En("New task was create")
   @Ja("タスクを作成しました")
   def successfullyAdded: String
+}
+
+@C10NMessages
+trait ActivityView {
+  @En("Recent Activity")
+  @Ja("近況")
+  def title: String
 }
 
 @C10NMessages
