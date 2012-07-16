@@ -22,12 +22,11 @@ import dao.DB
 object AssetTasks extends Controller {
   implicit def m: Messages = Messages.m
 
-  case class AssetTaskForm(asset_id: Long, description: String, user: String, tags: String, icons: String)
+  case class AssetTaskForm(asset_id: Long, description: String, tags: String, icons: String)
 
   val taskForm = Form(mapping(
     "asset_id" -> longNumber,
     "description" -> nonEmptyText,
-    "user" -> nonEmptyText,
     "tags" -> text,
     "icons" -> text)
     (AssetTaskForm.apply)(AssetTaskForm.unapply))
@@ -35,11 +34,11 @@ object AssetTasks extends Controller {
   def task2view = (task: models.AssetTask) =>
     ViewAssetTask(task.id, task.asset_id, task.user, task.description, task.dateStr, task.tags, task.icons)
 
-  def form2task = (taskForm: AssetTaskForm) =>
+  def form2task = (taskForm: AssetTaskForm, user: String) =>
     AssetTask(
       DB.NEW_ID,
       taskForm.asset_id,
-      taskForm.user,
+      user,
       taskForm.description,
       new Date,
       toDelimitedList(taskForm.tags),
@@ -74,7 +73,7 @@ object AssetTasks extends Controller {
         case Some(json) => taskForm.bind(json).fold(
           errors => BadRequest(errors.errorsAsJson),
           viewTask => {
-            val hist = addTask(form2task(viewTask), user)
+            val hist = addTask(form2task(viewTask, user), user)
             Ok(generate(Map("status" -> m.views.tasks.successfullyAdded,
               "task" -> task2view(hist.obj.asInstanceOf[AssetTask]))))
           }
