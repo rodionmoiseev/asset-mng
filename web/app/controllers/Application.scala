@@ -12,9 +12,9 @@ object Application extends Controller {
     "name" -> nonEmptyText
   )(LoginForm.apply)(LoginForm.unapply))
 
-  def status = AssetMngAction {
+  def tasks = AssetMngAction {
     (user, request) =>
-      Ok(views.html.status(user))
+      Ok(views.html.tasks(user))
   }
 
   def assets = AssetMngAction {

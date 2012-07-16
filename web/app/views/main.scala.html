@@ -23,7 +23,7 @@
             </a>
 
             <ul class="nav">
-                @for(link <- List(("Status","status"), ("Assets", "assets"), ("Activity", "activity"))){
+                @for(link <- List(("Tasks","tasks"), ("Assets", "assets"), ("Activity", "activity"))){
                     @if(page.equals(link._2)){
                         <li class="active">
                     }else{

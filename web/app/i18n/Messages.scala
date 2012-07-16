@@ -110,8 +110,6 @@ trait Buttons {
 
 @C10NMessages
 trait Asset {
-  def status: Status
-
   @En("Assets")
   @Ja("アセット")
   def title: String
@@ -174,13 +172,6 @@ trait Task {
   @En("Task \"{1} ...\" by {0}")
   @Ja("{0}さんの\"{1} ...\"タスク")
   def describe(user: String, briefDescription: String): String
-}
-
-@C10NMessages
-trait Status {
-  @En("Status")
-  @Ja("ステータス")
-  def title: String
 }
 
 @C10NMessages

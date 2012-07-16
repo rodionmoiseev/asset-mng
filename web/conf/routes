@@ -5,7 +5,7 @@
 # Home page
 GET     /                           controllers.Application.index
 GET     /assets                     controllers.Application.assets
-GET     /status                     controllers.Application.status
+GET     /tasks                      controllers.Application.tasks
 GET     /activity                   controllers.Application.activity
 GET     /login                      controllers.Application.login
 POST    /login                      controllers.Application.login
