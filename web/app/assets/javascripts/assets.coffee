@@ -53,3 +53,15 @@ $ ->
   $('#link-add-asset').click -> $('#form-add-asset').show 'fast'
   $('#btn-cancel-add-asset').click -> $('#form-add-asset').hide 'fast'
 
+  #
+  # Enable tablesorter.js
+  #
+  $('#myTable').tablesorter
+    headers:
+      4:
+        sorter: false
+  ko.bindingHandlers.triggerUpdate =
+    update: (element, valueAccessor) ->
+      ko.utils.unwrapObservable valueAccessor()
+      $(element).trigger 'update'
+

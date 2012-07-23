@@ -60,7 +60,8 @@
         <input type="text" size="30" class="search-query" placeholder="Filter"><i class="icon-search"></i>
     </div>
     <div id="assets-list">
-        <table class="table table-striped table-bordered table-condensed">
+        <!-- table table-striped table-bordered table-condensed  -->
+        <table id="myTable" class="tablesorter table table-striped table-bordered table-condensed" data-bind="triggerUpdate: assets">
             <thead>
                 <tr>
                     <th>@m.asset.hostname</th>
