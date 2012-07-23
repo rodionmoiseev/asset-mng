@@ -27,7 +27,7 @@ abstract class JsonDB[A <: Persistent[A]](val file: String, val enc: String, val
 
   def all: List[A] = {
     sync() //Sync file-memory state
-    items.toList
+    items.toList.sortWith(ordering)
   }
 
   private def sync() {
@@ -67,10 +67,14 @@ abstract class JsonDB[A <: Persistent[A]](val file: String, val enc: String, val
   def write(data: List[A]): String = generate(data)
 
   def read(data: String): List[A]
+
+  def ordering: (A, A) => Boolean = _.id < _.id
 }
 
 class JsonAssetsDB(file: String, enc: String, idProvider: UIDProvider) extends JsonDB[Asset](file, enc, idProvider) with AssetsDB {
   def read(data: String) = parse[List[Asset]](data)
+
+  override def ordering = _.hostname < _.hostname
 }
 
 class JsonAssetTasksDB(file: String, enc: String, idProvider: UIDProvider) extends JsonDB[AssetTask](file, enc, idProvider) with AssetTasksDB {
