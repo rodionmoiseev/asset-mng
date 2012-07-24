@@ -76,7 +76,7 @@
                        </li>
                    </ul>
                    <!-- /ko -->
-                   <ul data-bind="foreach: tasks">
+                   <ul data-bind="template: { foreach: tasks, afterRender: decorate }">
                        <li>
                            <div class="asset-task">
                                <div class="asset-task-icons" data-bind="foreach: icons">
@@ -93,7 +93,9 @@
                                </div>
 
                                <div class="asset-task-controls" data-bind="click: $parent.removeTask">
-                                    <a href="#"><i class="icon-trash"></i></a>
+                                    <a href="#" class="delete-task" rel="tooltip" title="@m.views.tasks.delete">
+                                        <i class="icon-trash"></i>
+                                    </a>
                                </div>
                            </div>
                        </li>

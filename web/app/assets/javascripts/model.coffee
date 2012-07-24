@@ -25,6 +25,10 @@ class AM.AssetList
        error: (jqXHR) =>
          window.console.log(jqXHR.responseText)
 
+  decorate: ->
+    $('.delete-asset').tooltip
+      placement: 'right'
+
 class AM.AssetTask
   constructor: (task) ->
     @id = task.id
@@ -55,6 +59,9 @@ class AM.AssetTaskGroup
         @tasks.remove(task)
       error: (jqXHR) =>
         window.console.log(jqXHR.responseText)
+
+  decorate: ->
+    $('.delete-task').tooltip()
 
 class AM.AssetTaskGroupList
   constructor: (taskGroups) ->
@@ -93,3 +100,6 @@ class AM.ActivityList
 
   addActivity: (activity) ->
     @activities.unshift new AM.Activity(activity)
+
+  decorate: ->
+    $('.undo-activity').tooltip()

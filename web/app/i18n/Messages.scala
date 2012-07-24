@@ -86,6 +86,10 @@ trait Assets {
   @En("New asset was added")
   @Ja("アセットを登録しました")
   def successfullyAdded: String
+
+  @En("Delete")
+  @Ja("削除")
+  def delete: String
 }
 
 @C10NMessages
@@ -101,6 +105,10 @@ trait Tasks {
   @En("New task was create")
   @Ja("タスクを作成しました")
   def successfullyAdded: String
+
+  @En("Delete")
+  @Ja("削除")
+  def delete: String
 }
 
 @C10NMessages
@@ -108,6 +116,10 @@ trait ActivityView {
   @En("Recent Activity")
   @Ja("近況")
   def title: String
+
+  @En("Undo")
+  @Ja("元に戻す")
+  def undo: String
 }
 
 @C10NMessages

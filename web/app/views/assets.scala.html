@@ -71,13 +71,15 @@
                     <th></th>
                 </tr>
             </thead>
-            <tbody data-bind="foreach: assets">
+            <tbody data-bind="template: { foreach: assets, afterRender: decorate }">
                 <tr>
                     <td><span data-bind="text: hostname"></span></td>
                     <td><span data-bind="text: ip"></span></td>
                     <td><span data-bind="text: description"></span></td>
                     <td><span data-bind="text: admin"></span></td>
-                    <td><a href="#" data-bind="click: $parent.removeAsset"><i class="icon-trash"></i></a></td>
+                    <td><a href="#" data-bind="click: $parent.removeAsset" class="delete-asset" rel="tooltip" title="@m.views.assets.delete">
+                        <i class="icon-trash"></i>
+                    </a></td>
                 </tr>
             </tbody>
         </table>

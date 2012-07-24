@@ -5,11 +5,11 @@
         <input type="text" size="30" class="search-query" placeholder="Filter"><i class="icon-search"></i>
     </div>
     <div id="activity-list">
-        <ul data-bind="foreach: activities">
+        <ul data-bind="template: { foreach: activities, afterRender: decorate }">
             <ul class="activity">
                 <!-- ko if: canUndo -->
                 <div class="activity-controls" data-bind="click: $parent.undo">
-                    <a href="#"><i class="icon-backward"></i></a>
+                    <a href="#" class="undo-activity" rel="tooltip" title="@m.views.activity.undo"><i class="icon-backward"></i></a>
                 </div>
                 <!-- /ko -->
                 <div class="activity-message">
