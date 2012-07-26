@@ -1,10 +1,10 @@
-@(user: String)(implicit m: i18n.Messages)
+@()(implicit ctx: context.AssetMngContext)
 
-@main(Some(user), "assets", "assets"){
+@main(Some(ctx.user), ctx.m, "assets", "assets"){
     <div class="well">
         <div>
             <i class="icon-plus-sign"></i>
-            <a id="link-add-asset" href="#">@m.views.assets.addAsset</a>
+            <a id="link-add-asset" href="#">@ctx.m.views.assets.addAsset</a>
 
             <div class="hidden alert alert-success" id="alert-add-asset">
                 <a class="close" href="#">&times;</a>
@@ -15,36 +15,36 @@
                 <form data-bind="submit: save">
                     <fieldset>
                         <div class="control-group" data-bind="css: { error: errors.hostname }">
-                            <label>@m.asset.hostname</label>
+                            <label>@ctx.m.asset.hostname</label>
                             <div class="controls">
                                 <input data-bind="value: hostname">
                                 <p class="help-block" data-bind="text: errors.hostname"></p>
                             </div>
                         </div>
                         <div class="control-group" data-bind="css: { error: errors.ip }">
-                            <label>@m.asset.ip</label>
+                            <label>@ctx.m.asset.ip</label>
                             <div class="controls">
                                 <input data-bind="value: ip">
                                 <p class="help-block" data-bind="text: errors.ip"></p>
                             </div>
                         </div>
                         <div class="control-group">
-                            <label>@m.asset.description</label>
+                            <label>@ctx.m.asset.description</label>
                             <div class="controls">
                                 <textarea rows="3" cols="30" data-bind="value: description"></textarea>
                             </div>
                         </div>
                         <div class="control-group" data-bind="css: { error: errors.admin }">
-                            <label>@m.asset.admin</label>
+                            <label>@ctx.m.asset.admin</label>
                             <div class="controls">
                                 <input data-bind="value: admin">
                                 <p class="help-block" data-bind="text: errors.admin"></p>
                             </div>
                         </div>
-                        <input class="btn btn-success" type="submit" value="@m.buttons.save">
+                        <input class="btn btn-success" type="submit" value="@ctx.m.buttons.save">
                         <a id="btn-cancel-add-asset" class="btn btn-danger">
                             <i class="icon-remove"></i>
-                            @m.buttons.cancel
+                            @ctx.m.buttons.cancel
                         </a>
                     </fieldset>
                 </form>
@@ -52,7 +52,7 @@
         </div>
         <div>
             <i class="icon-circle-arrow-down"></i>
-            @m.views.assets.importAssets
+            @ctx.m.views.assets.importAssets
          </div>
     </div>
 
@@ -64,10 +64,10 @@
         <table id="myTable" class="tablesorter table table-striped table-bordered table-condensed" data-bind="triggerUpdate: assets">
             <thead>
                 <tr>
-                    <th>@m.asset.hostname</th>
-                    <th>@m.asset.ip</th>
-                    <th>@m.asset.description</th>
-                    <th>@m.asset.admin</th>
+                    <th>@ctx.m.asset.hostname</th>
+                    <th>@ctx.m.asset.ip</th>
+                    <th>@ctx.m.asset.description</th>
+                    <th>@ctx.m.asset.admin</th>
                     <th></th>
                 </tr>
             </thead>
@@ -77,7 +77,7 @@
                     <td><span data-bind="text: ip"></span></td>
                     <td><span data-bind="text: description"></span></td>
                     <td><span data-bind="text: admin"></span></td>
-                    <td><a href="#" data-bind="click: $parent.removeAsset" class="delete-asset" rel="tooltip" title="@m.views.assets.delete">
+                    <td><a href="#" data-bind="click: $parent.removeAsset" class="delete-asset" rel="tooltip" title="@ctx.m.views.assets.delete">
                         <i class="icon-trash"></i>
                     </a></td>
                 </tr>

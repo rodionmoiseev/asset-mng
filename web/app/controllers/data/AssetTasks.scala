@@ -9,7 +9,6 @@ import play.api.data.Forms._
 import scala.Some
 import models.view._
 import models._
-import i18n.Messages
 import dao.Module._
 import controllers.Application.AssetMngAction
 import dao.DB
@@ -20,7 +19,6 @@ import dao.DB
  */
 
 object AssetTasks extends Controller {
-  implicit def m: Messages = Messages.m
 
   case class AssetTaskForm(asset_id: Long, description: String, tags: String, icons: String)
 
@@ -59,7 +57,7 @@ object AssetTasks extends Controller {
     ViewAssetTaskGroup(Assets.asset2view(entry._1), entry._2 map task2view)
 
   def groupedByAsset = AssetMngAction {
-    (user, request) =>
+    implicit ctx =>
       val tasks = assetTasksDB.all
       val groups = assetsDB.all map {
         (asset) => (asset, tasks.filter((task) => task.asset_id == asset.id))
@@ -68,19 +66,19 @@ object AssetTasks extends Controller {
   }
 
   def add = AssetMngAction {
-    (user, request) =>
-      request.body.asJson match {
+    implicit ctx =>
+      ctx.request.body.asJson match {
         case Some(json) => taskForm.bind(json).fold(
           errors => BadRequest(errors.errorsAsJson),
           viewTask => {
-            val hist = addTask(form2task(viewTask, user), user)
-            Ok(generate(Map("status" -> m.views.tasks.successfullyAdded,
+            val hist = addTask(form2task(viewTask, ctx.user), ctx.user)
+            Ok(generate(Map("status" -> ctx.m.views.tasks.successfullyAdded,
               "task" -> task2view(hist.obj.asInstanceOf[AssetTask]))))
           }
         )
         case None => BadRequest(toJson(
           Map("status" -> "ERROR",
-            "cause" -> ("Failed to parse body as JSON: " + request.body.asText.getOrElse(request.body.toString)))
+            "cause" -> ("Failed to parse body as JSON: " + ctx.request.body.asText.getOrElse(ctx.request.body.toString)))
         ))
       }
   }
@@ -91,8 +89,8 @@ object AssetTasks extends Controller {
   }
 
   def delete(id: Long) = AssetMngAction {
-    (user, request) =>
-      deleteTask(id, user)
+    implicit ctx =>
+      deleteTask(id, ctx.user)
       Ok(toJson(Map("status" -> "OK")))
   }
 

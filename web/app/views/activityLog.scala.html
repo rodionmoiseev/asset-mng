@@ -1,2 +1,2 @@
-@()(obj: Html)(action: Html)(implicit m: i18n.Messages)
-@Html(m.activity.log(obj.toString, action.toString))
+@()(obj: Html)(action: Html)(implicit ctx: context.AssetMngContext)
+@Html(ctx.m.activity.log(obj.toString, action.toString))

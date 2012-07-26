@@ -1,10 +1,10 @@
-@(user: String)(implicit m: i18n.Messages)
+@()(implicit ctx: context.AssetMngContext)
 
-@main(Some(user), "tasks", "tasks"){
+@main(Some(ctx.user), ctx.m, "tasks", "tasks"){
     <div class="well">
         <div>
             <i class="icon-plus-sign"></i>
-            <a id="link-add-task" href="#">@m.views.tasks.addTask</a>
+            <a id="link-add-task" href="#">@ctx.m.views.tasks.addTask</a>
 
             <div class="hidden alert alert-success" id="alert-add-task">
                 <a class="close" href="#">&times;</a>
@@ -15,37 +15,37 @@
                 <form data-bind="submit: save">
                     <fieldset>
                         <div class="control-group">
-                            <label>@m.asset.hostname</label>
+                            <label>@ctx.m.asset.hostname</label>
                             <div class="controls">
                                 <select data-bind="options: assets, optionsText: 'hostname', value: asset">
                                 </select>
                             </div>
                         </div>
                         <div class="control-group" data-bind="css: { error: errors.description }">
-                            <label>@m.task.description</label>
+                            <label>@ctx.m.task.description</label>
                             <div class="controls">
                                 <textarea rows="3" cols="30" data-bind="value: description"></textarea>
                                 <p class="help-block" data-bind="text: errors.description"></p>
                             </div>
                         </div>
                         <div class="control-group" data-bind="css: { error: errors.tags }">
-                            <label>@m.task.tags</label>
+                            <label>@ctx.m.task.tags</label>
                             <div class="controls">
                                 <input data-bind="value: tags">
                                 <p class="help-block" data-bind="text: errors.tags"></p>
                             </div>
                         </div>
                         <div class="control-group" data-bind="css: { error: errors.icons }">
-                            <label>@m.task.icons</label>
+                            <label>@ctx.m.task.icons</label>
                             <div class="controls">
                                 <input id="icons" data-bind="value: icons">
                                 <p class="help-block" data-bind="text: errors.icons"></p>
                             </div>
                         </div>
-                        <input class="btn btn-success" type="submit" value="@m.buttons.save">
+                        <input class="btn btn-success" type="submit" value="@ctx.m.buttons.save">
                         <a id="btn-cancel-add-task" class="btn btn-danger">
                             <i class="icon-remove"></i>
-                            @m.buttons.cancel
+                            @ctx.m.buttons.cancel
                         </a>
                     </fieldset>
                 </form>
@@ -53,7 +53,7 @@
         </div>
         <div>
             <i class="icon-circle-arrow-down"></i>
-            @m.views.assets.importAssets
+            @ctx.m.views.assets.importAssets
          </div>
     </div>
 
@@ -72,7 +72,7 @@
                    <ul>
                        <li>
                            <i class="icon-ok-circle"></i>
-                           @m.asset.available
+                           @ctx.m.asset.available
                        </li>
                    </ul>
                    <!-- /ko -->
@@ -93,7 +93,7 @@
                                </div>
 
                                <div class="asset-task-controls" data-bind="click: $parent.removeTask">
-                                    <a href="#" class="delete-task" rel="tooltip" title="@m.views.tasks.delete">
+                                    <a href="#" class="delete-task" rel="tooltip" title="@ctx.m.views.tasks.delete">
                                         <i class="icon-trash"></i>
                                     </a>
                                </div>

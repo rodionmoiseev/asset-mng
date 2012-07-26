@@ -1,14 +1,20 @@
-@()(implicit m: i18n.Messages)
+@(m: i18n.Messages)
 
-@main(None, "login", "login"){
+@main(None, m, "login", "login"){
     <div class="hero-unit">
         <h1>@m.login.header</h1>
         <p>@m.login.message</p>
         <p>
-            <form action="/login" method="POST">
+            <form id="login-form" class="form-inline" action="/login" method="POST">
                 @m.login.userName
                 <input id="login-form-name" type="text" name="name" value="">
-                <input type="submit" class="btn btn-primary" value="@m.login.button">
+                <input id="login-form-lang" type="hidden" name="lang" value="en">
+                <a class="btn btn-primary" onclick="AM.submitForm('en');">
+                    <img src='@routes.Assets.at("images/en.png")'>
+                </a>
+                <a class="btn btn-primary" onclick="AM.submitForm('ja');">
+                     <img src='@routes.Assets.at("images/jp.png")'>
+                </a>
             </form>
         </p>
     </div>

@@ -5,14 +5,14 @@ import com.codahale.jerkson.Json._
 import dao.Module._
 import models._
 import controllers.Application.AssetMngAction
-import java.util.Date
 import models.Undo
 import models.Add
 import models.HistoryEntry
 import view.ViewHistoryEntry
 import scala.Some
 import models.Delete
-import dao.DB
+import context.AssetMngContext
+import i18n.Messages
 
 /**
  *
@@ -20,8 +20,8 @@ import dao.DB
  */
 
 object Activity extends Controller {
-  def activity2view = (entry: HistoryEntry) =>
-    ViewHistoryEntry(entry.id, entry.user, entry.dateStr, entry.action.localise, entry.obj.describe, canUndo(entry))
+  def activity2view = (entry: HistoryEntry, m: Messages) =>
+    ViewHistoryEntry(entry.id, entry.user, entry.dateStr, entry.action.localise(m), entry.obj.describe(m), canUndo(entry))
 
   private def canUndo(entry: HistoryEntry): Boolean = {
     entry.action match {
@@ -40,17 +40,18 @@ object Activity extends Controller {
   }
 
   def list = AssetMngAction {
-    (user, request) =>
-      Ok(generate(activityDB.all.reverse map activity2view))
+    implicit ctx => {
+      Ok(generate(activityDB.all.reverse map (activity2view(_, ctx.m))))
+    }
   }
 
   def undo(id: Long) = AssetMngAction {
-    (user, request) =>
-      val newHistoryEntry = activityDB.all.find( (entry) => entry.id == id && canUndo(entry) ) match {
+    implicit ctx =>
+      val newHistoryEntry = activityDB.all.find((entry) => entry.id == id && canUndo(entry)) match {
         case Some(entry) => {
           entry.action match {
-            case Add() => delete(entry, user)
-            case Delete() => add(entry, user)
+            case Add() => delete(entry, ctx.user)
+            case Delete() => add(entry, ctx.user)
             case _ => None
           }
         }
@@ -59,7 +60,7 @@ object Activity extends Controller {
       newHistoryEntry match {
         case Some(entry) => Ok(generate(Map(
           "status" -> "OK",
-          "activity" -> activity2view(entry))))
+          "activity" -> activity2view(entry, ctx.m))))
         case None => BadRequest(generate(Map("status" -> "ERROR")))
       }
   }

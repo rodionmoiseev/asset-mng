@@ -3,32 +3,38 @@ package controllers
 import play.api.mvc._
 import play.api.data.Form
 import play.api.data.Forms._
+import c10n.{C10NMsgFactory, LocaleProvider, C10NConfigBase, C10N}
+import c10n.annotations.{En, DefaultC10NAnnotations}
+import java.util.Locale
+import context.AssetMngContext
+import i18n.Messages
 
 object Application extends Controller {
 
-  case class LoginForm(name: String)
+  case class LoginForm(name: String, lang: String)
 
   val loginForm = Form(mapping(
-    "name" -> nonEmptyText
+    "name" -> nonEmptyText,
+    "lang" -> nonEmptyText
   )(LoginForm.apply)(LoginForm.unapply))
 
   def tasks = AssetMngAction {
-    (user, request) =>
-      Ok(views.html.tasks(user))
+    implicit ctx =>
+      Ok(views.html.tasks())
   }
 
   def assets = AssetMngAction {
-    (user, request) =>
-      Ok(views.html.assets(user))
+    implicit ctx =>
+      Ok(views.html.assets())
   }
 
   def activity = AssetMngAction {
-    (user, request) =>
-      Ok(views.html.activity(user))
+    implicit ctx =>
+      Ok(views.html.activity())
   }
 
   def index = AssetMngAction {
-    (user, request) =>
+    implicit ctx =>
       Redirect(routes.Application.assets())
   }
 
@@ -36,7 +42,7 @@ object Application extends Controller {
     implicit request =>
       loginForm.bindFromRequest.fold(
         noLoginSupplied => {
-          Ok(views.html.login())
+          Ok(views.html.login(getC10NMsgFactory(request).get(classOf[Messages])))
         },
         form => {
           request.session.get("logst_referer") match {
@@ -50,7 +56,7 @@ object Application extends Controller {
             case None => Redirect(routes.Application.index())
           }
         }.withSession(
-          request.session +("user", form.name)
+          request.session +("user", form.name) +("c10n-lang", form.lang)
         )
       )
   }
@@ -59,16 +65,39 @@ object Application extends Controller {
     Redirect(routes.Application.index()).withNewSession
   }
 
-  def AssetMngAction(f: (String, Request[AnyContent]) => PlainResult) = {
+  def AssetMngAction(f: AssetMngContext => PlainResult) = {
     Action {
-      request =>
-        request.session.get("user").map(user => f(user, request).withSession(
-          request.session +("user", user))
+      request => {
+        val c10nMsgFactory = getC10NMsgFactory(request)
+        request.session.get("user").map(user =>
+          f(AssetMngContext(user, c10nMsgFactory, request)).withSession(
+            request.session
+              +("user", user)
+              +("c10n-lang", getLang(request))
+          )
         ).getOrElse {
           Redirect(routes.Application.login()).withSession(
             request.session +("logst_referer", request.uri)
           )
         }
+      }
     }
   }
+
+  private def getC10NMsgFactory(request: Request[AnyContent]): C10NMsgFactory = {
+    val c10nLang = getLang(request)
+    C10N.configure(new C10NConfigBase {
+      def configure() {
+        install(new DefaultC10NAnnotations)
+        //fallback to @En values
+        bindAnnotation(classOf[En])
+        setLocaleProvider(new LocaleProvider {
+          def getLocale = new Locale(c10nLang)
+        })
+      }
+    })
+    C10N.getRootFactory
+  }
+
+  private def getLang(request: Request[AnyContent]): String =request.session.get("c10n-lang").getOrElse("en")
 }

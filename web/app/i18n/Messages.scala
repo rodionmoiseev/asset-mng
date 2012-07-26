@@ -1,14 +1,15 @@
 package i18n
 
 import c10n.annotations.{Ja, En}
-import c10n.{C10N, C10NMessages}
+import c10n.C10NMessages
+import context.AssetMngContext
 
 /**
  *
  * @author rodion
  */
 object Messages {
-  implicit val m: Messages = C10N.get(classOf[Messages])
+  implicit val req2messages: (AssetMngContext => Messages) = _.m
 }
 
 @C10NMessages

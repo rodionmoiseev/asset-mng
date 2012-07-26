@@ -1,6 +1,6 @@
-@(user: String)(implicit m: i18n.Messages)
+@()(implicit ctx: context.AssetMngContext)
 
-@main(Some(user), "activity", "activity"){
+@main(Some(ctx.user), ctx.m, "activity", "activity"){
     <div>
         <input type="text" size="30" class="search-query" placeholder="Filter"><i class="icon-search"></i>
     </div>
@@ -9,7 +9,7 @@
             <ul class="activity">
                 <!-- ko if: canUndo -->
                 <div class="activity-controls" data-bind="click: $parent.undo">
-                    <a href="#" class="undo-activity" rel="tooltip" title="@m.views.activity.undo"><i class="icon-backward"></i></a>
+                    <a href="#" class="undo-activity" rel="tooltip" title="@ctx.m.views.activity.undo"><i class="icon-backward"></i></a>
                 </div>
                 <!-- /ko -->
                 <div class="activity-message">

@@ -5,11 +5,9 @@ import play.api.libs.json.Json.toJson
 
 import play.api.mvc._
 import models._
-import models.view.ViewAsset
 import controllers.IPUtils
 import play.api.data._
 import play.api.data.Forms._
-import i18n.Messages
 import dao.Module._
 import java.util
 import controllers.Application.AssetMngAction
@@ -27,8 +25,6 @@ import models.Add
  */
 
 object Assets extends Controller {
-  val m: Messages = Messages.m
-
   def asset2view = (asset: Asset) =>
     ViewAsset(
       asset.id,
@@ -62,24 +58,24 @@ object Assets extends Controller {
     (AssetForm.apply)(AssetForm.unapply))
 
   def list = AssetMngAction {
-    (user, request) =>
+    implicit ctx =>
       Ok(generate(assetsDB.all map asset2view))
   }
 
   def add = AssetMngAction {
-    (user, request) =>
-      request.body.asJson match {
+    implicit ctx =>
+      ctx.request.body.asJson match {
         case Some(json) => assetForm.bind(json).fold(
           errors => BadRequest(errors.errorsAsJson),
           viewAsset => {
-            val hist = addAsset(form2asset(viewAsset), user)
-            Ok(generate(Map("status" -> m.views.assets.successfullyAdded,
+            val hist = addAsset(form2asset(viewAsset), ctx.user)
+            Ok(generate(Map("status" -> ctx.m.views.assets.successfullyAdded,
               "asset" -> asset2view(hist.obj.asInstanceOf[Asset]))))
           }
         )
         case None => BadRequest(toJson(
           Map("status" -> "ERROR",
-            "cause" -> ("Failed to parse body as JSON: " + request.body.asText.getOrElse(request.body.toString)))
+            "cause" -> ("Failed to parse body as JSON: " + ctx.request.body.asText.getOrElse(ctx.request.body.toString)))
         ))
       }
   }
@@ -90,8 +86,8 @@ object Assets extends Controller {
   }
 
   def delete(id: Long) = AssetMngAction {
-    (user, request) =>
-      deleteAsset(id, user)
+    implicit ctx =>
+      deleteAsset(id, ctx.user)
       Ok(toJson(Map("status" -> "OK")))
   }
 
