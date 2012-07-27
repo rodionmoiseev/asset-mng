@@ -24,7 +24,7 @@ class NewTaskForm
     $.ajax
       url: '/dao/tasks/add'
       type: 'POST'
-      data: ko.toJSON(@)
+      data: ko.toJSON(@, ['asset_id', 'description', 'user', 'tags', 'icons'])
       contentType: 'application/json'
       success: (response) =>
         r = JSON.parse(response)
