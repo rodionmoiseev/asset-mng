@@ -60,12 +60,24 @@ $ ->
   $('.asset-task-controls').live 'mouseleave', ->
     $(@).css { opacity: 0.3 }
 
-  a = $("#icons").typeahead
+  #
+  # Typeahead (auto-completion) related code
+  #
+  typeaheadUpdater = (item) ->
+    res = @query.split(',')[0..-2]
+    res.push item
+    res = (x.trim() for x in res)
+    res.join ", "
+  typeaheadMatcher = (item) -> ~item.toLowerCase().indexOf(@query.toLowerCase().split(',').pop().trim())
+
+  $.getJSON "/dao/tags", (tags) ->
+    $('#tags').typeahead
+      source: tags
+      updater: typeaheadUpdater
+      matcher: typeaheadMatcher
+
+  $("#icons").typeahead
     source: window.twitter_bootstrap_icons
-    updater: (item) ->
-      res = @query.split(',')[0..-2]
-      res.push item
-      res = (x.trim() for x in res)
-      res.join ", "
-    matcher: (item) -> ~item.toLowerCase().indexOf(@query.toLowerCase().split(',').pop().trim())
+    updater: typeaheadUpdater
+    matcher: typeaheadMatcher
     highlighter: (item) -> '<i class="icon-' + item + '"></i> ' + item
