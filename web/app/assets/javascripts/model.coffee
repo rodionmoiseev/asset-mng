@@ -69,9 +69,7 @@ class AM.AssetTaskGroupList
     @taskGroups($.map taskGroups, (taskGroup) -> new AM.AssetTaskGroup(taskGroup))
 
   addTask: (task) ->
-    window.console.log("addTask(" + task + ")")
     ko.utils.arrayForEach @taskGroups(), (taskGroup) ->
-      window.console.log("match taskGroup.asset.id=" + taskGroup.asset().id + " with task.asset_id=" + task.asset_id)
       if taskGroup.asset().id == task.asset_id then taskGroup.tasks.unshift new AM.AssetTask(task)
 
 class AM.Activity
