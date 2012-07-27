@@ -10,8 +10,17 @@ class AM.Asset
 
 class AM.AssetList
   constructor: (assets) ->
+    @filter = ko.observable('')
     @assets = ko.observableArray([])
     @assets($.map assets, (asset) -> new AM.Asset(asset))
+    @filteredAssets = ko.computed =>
+      lfilter = @filter().toLowerCase()
+      if !lfilter then @assets() else ko.utils.arrayFilter @assets(), (asset) ->
+        contains = (str, part) -> str.indexOf(part) != -1
+        (contains asset.hostname().toLowerCase(), lfilter) or
+          (contains asset.ip().toLowerCase(), lfilter) or
+          (contains asset.admin().toLowerCase(), lfilter) or
+          (contains asset.description().toLowerCase(), lfilter)
 
   addAsset: (asset) ->
     @assets.unshift new AM.Asset(asset)
@@ -46,10 +55,23 @@ class AM.AssetTask
     $(event.target).find(".asset-controls").animate({opacity: 0.2}, 100)
 
 class AM.AssetTaskGroup
-  constructor: (taskGroup) ->
+  constructor: (parent, taskGroup) ->
+    @parent = parent
     @asset = ko.observable(new AM.Asset(taskGroup.asset))
     @tasks = ko.observableArray([])
     @tasks($.map taskGroup.tasks, (task) -> new AM.AssetTask(task))
+    @filteredTasks = ko.computed =>
+      lfilter = @parent.filter().toLowerCase()
+      if !lfilter then @tasks() else ko.utils.arrayFilter @tasks(), (task) => @taskMatches task, lfilter
+
+  containsTaskMatching: (filter) =>
+    found = ko.utils.arrayFirst @tasks(), (task) => @taskMatches task, filter
+    found?
+
+  taskMatches: (task, filter) ->
+    contains = (str, part) -> str.indexOf(part) != -1
+    (contains task.description().toLowerCase(), filter) or
+      (contains task.user().toLowerCase(), filter)
 
   removeTask: (task) =>
     $.ajax
@@ -65,8 +87,13 @@ class AM.AssetTaskGroup
 
 class AM.AssetTaskGroupList
   constructor: (taskGroups) ->
+    @filter = ko.observable('')
     @taskGroups = ko.observableArray([])
-    @taskGroups($.map taskGroups, (taskGroup) -> new AM.AssetTaskGroup(taskGroup))
+    @taskGroups($.map taskGroups, (taskGroup) => new AM.AssetTaskGroup(@, taskGroup))
+    @filteredTaskGroups = ko.computed =>
+      lfilter = @filter().toLowerCase()
+      if !lfilter then @taskGroups() else ko.utils.arrayFilter @taskGroups(), (taskGroup) ->
+        taskGroup.containsTaskMatching(lfilter)
 
   addTask: (task) ->
     ko.utils.arrayForEach @taskGroups(), (taskGroup) ->

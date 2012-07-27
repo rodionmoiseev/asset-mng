@@ -57,12 +57,12 @@
          </div>
     </div>
 
-    <div>
-        <input type="text" size="30" class="search-query" placeholder="Filter"><i class="icon-search"></i>
-    </div>
-
     <div id="tasks-list">
-        <ul data-bind="foreach: taskGroups">
+        <div id="tasks-filter">
+           <input type="text" size="30" data-bind="value: filter, valueUpdate: 'afterkeydown'" class="search-query" placeholder="Filter"><i class="icon-search"></i>
+        </div>
+
+        <ul data-bind="foreach: filteredTaskGroups">
             <li>
                <div class="well">
                    <h3 data-bind="with: asset">
@@ -76,7 +76,7 @@
                        </li>
                    </ul>
                    <!-- /ko -->
-                   <ul data-bind="template: { foreach: tasks, afterRender: decorate }">
+                   <ul data-bind="template: { foreach: filteredTasks, afterRender: decorate }">
                        <li>
                            <div class="asset-task">
                                <div class="asset-task-icons" data-bind="foreach: icons">

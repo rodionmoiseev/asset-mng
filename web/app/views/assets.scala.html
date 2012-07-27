@@ -56,12 +56,13 @@
          </div>
     </div>
 
-    <div>
-        <input type="text" size="30" class="search-query" placeholder="Filter"><i class="icon-search"></i>
-    </div>
     <div id="assets-list">
+        <div id="asset-filter">
+            <input type="text" size="30" data-bind="value: filter, valueUpdate: 'afterkeydown'" class="search-query" placeholder="Filter"><i class="icon-search"></i>
+        </div>
+
         <!-- table table-striped table-bordered table-condensed  -->
-        <table id="myTable" class="tablesorter table table-striped table-bordered table-condensed" data-bind="triggerUpdate: assets">
+        <table id="myTable" class="tablesorter table table-striped table-bordered table-condensed" data-bind="triggerUpdate: filteredAssets">
             <thead>
                 <tr>
                     <th>@ctx.m.asset.hostname</th>
@@ -71,7 +72,7 @@
                     <th></th>
                 </tr>
             </thead>
-            <tbody data-bind="template: { foreach: assets, afterRender: decorate }">
+            <tbody data-bind="template: { foreach: filteredAssets, afterRender: decorate }">
                 <tr>
                     <td><span data-bind="text: hostname"></span></td>
                     <td><span data-bind="text: ip"></span></td>
