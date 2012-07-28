@@ -1,6 +1,6 @@
 package i18n
 
-import c10n.annotations.{Ja, En}
+import c10n.annotations.{Ru, Ja, En}
 import c10n.C10NMessages
 import context.AssetMngContext
 
@@ -35,29 +35,33 @@ trait Messages {
 trait Main {
   @En("Logout ({0})")
   @Ja("ログアウト ({0})")
+  @Ru("Выход ({0})")
   def logoutLink(userName: String): String
 
   @En("Login")
   @Ja("ログイン")
+  @Ru("Войти")
   def login: String
 }
 
 @C10NMessages
 trait Login {
   @En("Asset Manager")
-  @Ja("Asset Manager")
   def header: String
 
   @En("Please log-in")
   @Ja("ログインしてください")
+  @Ru("Пожалуйста войдите")
   def message: String
 
   @En("User name")
   @Ja("ユーザ名")
+  @Ru("Имя пользователя")
   def userName: String
 
   @En("Login")
   @Ja("ログイン")
+  @Ru("Вход")
   def button: String
 }
 
@@ -74,22 +78,27 @@ trait Views {
 trait Assets {
   @En("Manage Assets")
   @Ja("アセット管理")
+  @Ru("Активы")
   def title: String
 
   @En("Add new asset")
   @Ja("新規アセット追加")
+  @Ru("Добавить актив")
   def addAsset: String
 
   @En("Import assets")
   @Ja("アセットのインポート")
+  @Ru("Импортировать активы")
   def importAssets: String
 
   @En("New asset was added")
   @Ja("アセットを登録しました")
+  @Ru("Новый актив был добавлен")
   def successfullyAdded: String
 
   @En("Delete")
   @Ja("削除")
+  @Ru("Удалить")
   def delete: String
 }
 
@@ -97,18 +106,22 @@ trait Assets {
 trait Tasks {
   @En("Tasks")
   @Ja("タスク")
+  @Ru("Задачи")
   def title: String
 
   @En("Add Task")
   @Ja("タスク追加")
+  @Ru("Добавить задачу")
   def addTask: String
 
   @En("New task was create")
   @Ja("タスクを作成しました")
+  @Ru("Новая задача была добавлена")
   def successfullyAdded: String
 
   @En("Delete")
   @Ja("削除")
+  @Ru("Удалить")
   def delete: String
 }
 
@@ -116,10 +129,12 @@ trait Tasks {
 trait ActivityView {
   @En("Recent Activity")
   @Ja("近況")
+  @Ru("Журнал действий")
   def title: String
 
   @En("Undo")
   @Ja("元に戻す")
+  @Ru("Отменить действие")
   def undo: String
 }
 
@@ -127,14 +142,17 @@ trait ActivityView {
 trait Buttons {
   @En("New Asset")
   @Ja("アセット追加")
+  @Ru("Добавить актив")
   def newAsset: String
 
   @En("Save")
   @Ja("保存")
+  @Ru("Сохранить")
   def save: String
 
   @En("Cancel")
   @Ja("キャンセル")
+  @Ru("Отменить")
   def cancel: String
 }
 
@@ -142,65 +160,70 @@ trait Buttons {
 trait Asset {
   @En("Assets")
   @Ja("アセット")
+  @Ru("Активы")
   def title: String
 
   @En("Hostname")
   @Ja("ホスト名")
+  @Ru("Имя хоста")
   def hostname: String
 
   @En("Name")
   @Ja("登録名")
+  @Ru("Имя")
   def name: String
 
   @En("IP address")
   @Ja("IPアドレス")
+  @Ru("IP адрес")
   def ip: String
 
   @En("Description")
   @Ja("概要")
+  @Ru("Описание")
   def description: String
 
   @En("Admin")
   @Ja("管理者")
+  @Ru("Администратор")
   def admin: String
 
   @En("Not used by anyone")
   @Ja("空いています")
+  @Ru("Не используется")
   def available: String
 
   @En("{0} asset")
   @Ja("{0}アセット")
+  @Ru("Актив {0}")
   def describe(hostname: String): String
 }
 
 @C10NMessages
 trait Task {
-  @En("Currently used assets")
-  @Ja("アセット使用状況")
-  def title: String
-
   @En("User")
   @Ja("ユーザ")
+  @Ru("Пользователь")
   def user: String
 
   @En("Description")
   @Ja("概要")
+  @Ru("Описание")
   def description: String
 
   @En("Tags")
   @Ja("タグ")
+  @Ru("Тэги")
   def tags: String
-
-  @En("Task list")
-  @Ja("タスク")
-  def taskList: String
 
   @En("Icons")
   @Ja("アイコン")
+  @Ru("Значёк")
   def icons: String
 
   @En("Task \"{1} ...\" by {0}")
   @Ja("{0}さんの\"{1} ...\"タスク")
+  @Ru("Задача \"{1} ...\" пользователя {0}")
   def describe(user: String, briefDescription: String): String
 }
 
@@ -208,11 +231,14 @@ trait Task {
 trait Errors {
   @En("Not a valid IP address")
   @Ja("不正なIPアドレス")
+  @Ru("IP адрес не верен")
   def invalidIP: String
 
   @En("<strong>Asset could not be saved: </strong> Please correct problems below and click 'Save'")
   @Ja("<strong>アセット保存に失敗しました: </strong> " +
     "入力内容を修正し「保存」ボタンをクリックしてください")
+  @Ru("<strong>Актив не был сохранён: </strong> исправьте ошибки ниже и" +
+    "попробуйте ещё раз.")
   def formValidationError: String
 }
 
@@ -220,45 +246,56 @@ trait Errors {
 trait Activity {
   @En("{0} has been {1}")
   @Ja("{0}が{1}されました")
+  @Ru("{0} был(а) {1}")
   def log(obj: String, action: String): String
 
   @En("added")
   @Ja("追加")
+  @Ru("добавлен(а)")
   def added: String
 
   @En("addition")
   @Ja("追加")
+  @Ru("добавление")
   def addition: String
 
   @En("modified")
   @Ja("編集")
+  @Ru("изменен(а)")
   def modified: String
 
   @En("modification")
   @Ja("編集")
+  @Ru("изменение")
   def modification: String
 
   @En("deleted")
   @Ja("削除")
+  @Ru("удален(а)")
   def deleted: String
 
   @En("deletion")
   @Ja("削除")
+  @Ru("удаление")
   def deletion: String
 
   @En("undone")
   @Ja("{0}のUNDO")
+  @Ru("{0} отменено")
   def undone(action: String): String
 
   @En("undo")
   @Ja("UNDO")
+  @Ru("отмена")
   def undo: String
 
   @En("asset")
   @Ja("アセット")
+  @Ru("аткив")
   def assetEntry: String
 
   @En("task")
   @Ja("タスク")
+  @Ru("задача")
   def assetTaskEntry: String
 }
