@@ -1,11 +1,11 @@
 @()(implicit ctx: context.AssetMngContext)
 
 @main(Some(ctx.user), ctx.m, "activity", "activity"){
-    <div>
-        <input type="text" size="30" class="search-query" placeholder="Filter"><i class="icon-search"></i>
-    </div>
     <div id="activity-list">
-        <ul data-bind="template: { foreach: activities, afterRender: decorate }">
+        <div>
+            <input type="text" size="30" data-bind="value: filter, valueUpdate: 'afterkeydown'" class="search-query" placeholder="Filter"><i class="icon-search"></i>
+        </div>
+        <ul data-bind="template: { foreach: filteredActivities, afterRender: decorate }">
             <ul class="activity">
                 <!-- ko if: canUndo -->
                 <div class="activity-controls" data-bind="click: $parent.undo">

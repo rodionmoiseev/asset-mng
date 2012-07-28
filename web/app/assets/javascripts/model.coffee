@@ -110,8 +110,16 @@ class AM.Activity
 
 class AM.ActivityList
   constructor: (activities) ->
+    @filter = ko.observable('')
     @activities = ko.observableArray([])
     @activities($.map activities, (activity) -> new AM.Activity(activity))
+    @filteredActivities = ko.computed =>
+      lfilter = @filter().toLowerCase()
+      if !lfilter then @activities() else ko.utils.arrayFilter @activities(), (activity) ->
+        contains = (str, part) -> str.indexOf(part) != -1
+        (contains activity.user.toLowerCase(), lfilter) or
+          (contains activity.action.toLowerCase(), lfilter) or
+          (contains activity.obj.toLowerCase(), lfilter)
 
   undo: (activity) =>
     $.ajax
