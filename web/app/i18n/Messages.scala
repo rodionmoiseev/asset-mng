@@ -76,6 +76,8 @@ trait Views {
 
 @C10NMessages
 trait Assets {
+  def status: Status
+
   @En("Manage Assets")
   @Ja("アセット管理")
   @Ru("Активы")
@@ -139,6 +141,49 @@ trait ActivityView {
 }
 
 @C10NMessages
+trait Status {
+  @En("Checking ...")
+  @Ja("取得中 ...")
+  @Ru("Идёт проверка ...")
+  def checkingTitle: String
+
+  @En("Pinging {0}")
+  @Ja("{0} ping中")
+  @Ru("Пинг-проверка {0}")
+  def checking(ip: String): String
+
+  @En("Online")
+  @Ja("オンライン")
+  @Ru("Онлайн")
+  def okTitle: String
+
+  @En("Successfully pinged {0}")
+  @Ja("{0} ping成功")
+  @Ru("Пинг-проверка {0} удалась")
+  def ok(ip: String): String
+
+  @En("Unreachable")
+  @Ja("通信不可")
+  @Ru("Хост недоступен")
+  def unreachableTitle: String
+
+  @En("Could not reach {0}")
+  @Ja("{0}と通信できませんでした")
+  @Ru("Попытка связи с {0} неудалась")
+  def unreachable(ip: String): String
+
+  @En("Network error")
+  @Ja("通信エラー")
+  @Ru("Ошибка связи")
+  def errorTitle: String
+
+  @En("Error trying connect to {0}: {1}")
+  @Ja("{0}と通信中にエラーが発生しました: {1}")
+  @Ru("Произошла ошибка при связи с {0}: {1}")
+  def error(ip: String, error: String): String
+}
+
+@C10NMessages
 trait Buttons {
   @En("New Asset")
   @Ja("アセット追加")
@@ -187,6 +232,11 @@ trait Asset {
   @Ja("管理者")
   @Ru("Администратор")
   def admin: String
+
+  @En("Status")
+  @Ja("死活状況")
+  @Ru("Статус")
+  def status: String
 
   @En("Not used by anyone")
   @Ja("空いています")

@@ -69,6 +69,7 @@
                     <th>@ctx.m.asset.ip</th>
                     <th>@ctx.m.asset.description</th>
                     <th>@ctx.m.asset.admin</th>
+                    <th>@ctx.m.asset.status</th>
                     <th></th>
                 </tr>
             </thead>
@@ -78,9 +79,17 @@
                     <td><span data-bind="text: ip"></span></td>
                     <td><span data-bind="text: description"></span></td>
                     <td><span data-bind="text: admin"></span></td>
-                    <td><a href="#" data-bind="click: $parent.removeAsset" class="delete-asset" rel="tooltip" title="@ctx.m.views.assets.delete">
-                        <i class="icon-trash"></i>
-                    </a></td>
+                    <td class="centered">
+                        <a href="#" class="asset-status" rel="popover"
+                           data-bind="attr: { 'data-content': status_message, title: status_title }">
+                            <i data-bind="attr: { class: status_icon }"></i>
+                        </a>
+                    </td>
+                    <td class="centered">
+                        <a href="#" data-bind="click: $parent.removeAsset" class="delete-asset" rel="tooltip" title="@ctx.m.views.assets.delete">
+                            <i class="icon-trash"></i>
+                        </a>
+                    </td>
                 </tr>
             </tbody>
         </table>

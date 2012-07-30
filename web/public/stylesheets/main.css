@@ -72,6 +72,10 @@ div.hidden {
     display: none;
 }
 
+td.centered {
+    text-align: center;
+}
+
 /*
  * Activity
  */

@@ -7,6 +7,13 @@ class AM.Asset
     @ip = ko.observable(asset.ip)
     @description = ko.observable(asset.description)
     @admin = ko.observable(asset.admin)
+    @status_message = asset.status.message + '<br><small>' + asset.status.lastChecked + '</small>'
+    @status_title = asset.status.title
+    @status_icon = switch asset.status.status
+                      when "ok" then "icon-ok-sign"
+                      when "unreachable" then "icon-exclamation-sign"
+                      when "checking" then "icon-time"
+                      else "icon-question-sign"
 
 class AM.AssetList
   constructor: (assets) ->
@@ -36,6 +43,8 @@ class AM.AssetList
 
   decorate: ->
     $('.delete-asset').tooltip
+      placement: 'right'
+    $('.asset-status').popover
       placement: 'right'
 
 class AM.AssetTask

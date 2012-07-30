@@ -16,8 +16,11 @@ import models.Asset
 import models.HistoryEntry
 import scala.Some
 import models.Delete
-import view.ViewAsset
+import view.{ViewAssetStatus, ViewAsset}
 import models.Add
+import assetstatus.Module._
+import assetstatus.AssetStatus
+import i18n.Messages
 
 /**
  *
@@ -25,14 +28,26 @@ import models.Add
  */
 
 object Assets extends Controller {
-  def asset2view = (asset: Asset) =>
+  def asset2view = (asset: Asset, m: Messages) =>
     ViewAsset(
       asset.id,
       asset.hostname,
       asset.ip,
       asset.description,
       asset.admin,
-      asset.parent_id)
+      asset.parent_id,
+      status2view(assetStatusSystem.getStatus(asset), m))
+
+  def status2view = (status: AssetStatus, m: Messages) => {
+    val ms = m.views.assets.status
+    val stat = status.status match {
+      case "checking" =>(ms.checkingTitle, ms.checking(status.asset.ip))
+      case "ok" => (ms.okTitle, ms.ok(status.asset.ip))
+      case "unreachable" => (ms.unreachableTitle, ms.unreachable(status.asset.ip))
+      case _ => (ms.errorTitle, ms.error(status.asset.ip, status.error))
+    }
+    ViewAssetStatus(status.status, stat._1, stat._2, status.lastCheckedStr)
+  }
 
   def form2asset = (asset: AssetForm) =>
     Asset(
@@ -59,7 +74,7 @@ object Assets extends Controller {
 
   def list = AssetMngAction {
     implicit ctx =>
-      Ok(generate(assetsDB.all map asset2view))
+      Ok(generate(assetsDB.all map (asset2view(_, ctx.m))))
   }
 
   def add = AssetMngAction {
@@ -70,7 +85,7 @@ object Assets extends Controller {
           viewAsset => {
             val hist = addAsset(form2asset(viewAsset), ctx.user)
             Ok(generate(Map("status" -> ctx.m.views.assets.successfullyAdded,
-              "asset" -> asset2view(hist.obj.asInstanceOf[Asset]))))
+              "asset" -> asset2view(hist.obj.asInstanceOf[Asset], ctx.m))))
           }
         )
         case None => BadRequest(toJson(

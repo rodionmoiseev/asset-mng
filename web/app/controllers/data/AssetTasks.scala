@@ -12,6 +12,7 @@ import models._
 import dao.Module._
 import controllers.Application.AssetMngAction
 import dao.DB
+import i18n.Messages
 
 /**
  *
@@ -53,8 +54,8 @@ object AssetTasks extends Controller {
       List()
   }
 
-  def asTaskGroup = (entry: (Asset, List[AssetTask])) =>
-    ViewAssetTaskGroup(Assets.asset2view(entry._1), entry._2 map task2view)
+  def asTaskGroup = (entry: (Asset, List[AssetTask]), m: Messages) =>
+    ViewAssetTaskGroup(Assets.asset2view(entry._1, m), entry._2 map task2view)
 
   def groupedByAsset = AssetMngAction {
     implicit ctx =>
@@ -62,7 +63,7 @@ object AssetTasks extends Controller {
       val groups = assetsDB.all map {
         (asset) => (asset, tasks.filter((task) => task.asset_id == asset.id))
       }
-      Ok(generate(groups map asTaskGroup))
+      Ok(generate(groups map (asTaskGroup(_, ctx.m))))
   }
 
   def add = AssetMngAction {
