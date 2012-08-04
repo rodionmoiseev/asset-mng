@@ -339,15 +339,15 @@ trait Activity {
   @Ru("удаление")
   def deletion: String
 
-  @En("undone")
+  @En("reverted to the state before {0}")
   @Ja("{0}のUNDO")
-  @Ru("{0} отменено")
+  @Ru("{0} отменено(а)")
   def undone(action: String): String
 
-  @En("undo")
-  @Ja("UNDO")
-  @Ru("отмена")
-  def undo: String
+  @En("undo of {0}")
+  @Ja("{0}のUNDO")
+  @Ru("отменена {0}")
+  def undo(action: String): String
 
   @En("asset")
   @Ja("アセット")

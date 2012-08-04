@@ -21,12 +21,22 @@ import i18n.Messages
 
 object Activity extends Controller {
   def activity2view = (entry: HistoryEntry, m: Messages) =>
-    ViewHistoryEntry(entry.id, entry.user, entry.dateStr, entry.action.localise(m), entry.obj.describe(m), canUndo(entry))
+    ViewHistoryEntry(entry.id,
+      entry.user,
+      entry.dateStr,
+      entry.action.localise(m),
+      entry.obj.describe(m),
+      canUndo(entry.action, entry))
 
-  private def canUndo(entry: HistoryEntry): Boolean = {
-    entry.action match {
-      // 'undo' cannot be undone (at least not for the moment)
-      case Undo(_) => false
+  private def canUndo(action: HistoryAction, entry: HistoryEntry): Boolean = {
+    action match {
+      // 'undo' can be undone to one level
+      case Undo(undoneAction) => undoneAction match {
+        case Add() => canUndo(Delete(), entry)
+        case Delete() => canUndo(Add(), entry)
+        case Modify() => canUndo(Modify(), entry)
+        case _ => false //Cannot undo an undo of undo for obvious reasons :D
+      }
       // 'delete' can only be undo when the target item does not exist
       case Delete() => !findDB(entry.obj).all.exists(_.id == entry.obj.id)
       // 'add' and 'modify' actions can be undone as long as the item still exists
@@ -47,12 +57,18 @@ object Activity extends Controller {
 
   def undo(id: Long) = AssetMngAction {
     implicit ctx =>
-      val newHistoryEntry = activityDB.all.find((entry) => entry.id == id && canUndo(entry)) match {
+      val newHistoryEntry = activityDB.all.find((entry) => entry.id == id && canUndo(entry.action, entry)) match {
         case Some(entry) => {
           entry.action match {
             case Add() => delete(entry, ctx.user)
             case Delete() => add(entry, ctx.user)
             case Modify() => update(entry, ctx.user)
+            case Undo(action) => action match {
+              case Add() => add(entry, ctx.user)
+              case Delete() => delete(entry, ctx.user)
+              case Modify() => update(entry, ctx.user)
+              case _ => None
+            }
             case _ => None
           }
         }

@@ -24,12 +24,12 @@ case class Delete() extends HistoryAction {
 }
 
 case class Undo(action: HistoryAction) extends HistoryAction {
-  def localise(implicit m: Messages) = m.activity.undone(
-    action match {
-      case Add() => m.activity.addition
-      case Modify() => m.activity.modification
-      case Delete() => m.activity.deletion
-      case Undo(_) => m.activity.undo
-    }
-  )
+  def localise(implicit m: Messages): String = m.activity.undone(localiseAction(action))
+
+  private def localiseAction(action: HistoryAction)(implicit m: Messages): String = action match {
+    case Add() => m.activity.addition
+    case Modify() => m.activity.modification
+    case Delete() => m.activity.deletion
+    case Undo(undoneAction) => m.activity.undo(localiseAction(undoneAction))
+  }
 }
