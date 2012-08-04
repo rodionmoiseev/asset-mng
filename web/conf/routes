@@ -18,6 +18,7 @@ DELETE  /dao/assets/delete/:id      controllers.data.Assets.delete(id: Long)
 
 GET     /dao/tasks/groupedByAsset   controllers.data.AssetTasks.groupedByAsset
 POST    /dao/tasks/add              controllers.data.AssetTasks.add
+POST    /dao/tasks/update           controllers.data.AssetTasks.update
 DELETE  /dao/tasks/delete/:id       controllers.data.AssetTasks.delete(id: Long)
 
 GET     /dao/activity               controllers.data.Activity.list

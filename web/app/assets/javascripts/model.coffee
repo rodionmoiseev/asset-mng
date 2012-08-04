@@ -91,8 +91,27 @@ class AM.AssetTaskGroup
       error: (jqXHR) =>
         window.console.log(jqXHR.responseText)
 
+  editTask: (task, event) =>
+    parent = $(event.target).parent().parent().children('.asset-task-description')
+    view = parent.children('span')
+    editor = parent.children('.edit-asset-task-description')
+    view.hide('fast')
+    editor.show('fast')
+    editor.children('a').click ->
+      $.ajax
+        url: '/dao/tasks/update'
+        type: 'POST'
+        data: ko.toJSON(task, ['id', 'asset_id', 'user', 'description', 'date', 'tags', 'icons'])
+        contentType: 'application/json'
+        success: (response) =>
+          view.show('fast')
+          editor.hide('fast')
+        error: (jqXHR) =>
+          window.console.log(jqXHR.responseText)
+
   decorate: ->
     $('.delete-task').tooltip()
+    $('.edit-task').tooltip()
 
 class AM.AssetTaskGroupList
   constructor: (taskGroups) ->

@@ -10,6 +10,8 @@ trait DB[A] {
 
   def save(item: A): A
 
+  def update(item: A): A
+
   def delete(id: Long): A
 }
 

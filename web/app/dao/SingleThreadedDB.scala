@@ -25,6 +25,10 @@ class SingleThreadedDB[A <: Persistent[A]](base: DB[A]) extends DB[A] {
     base.save(item)
   }
 
+  def update(item: A) = syncTask {
+    base.update(item)
+  }
+
   def delete(id: Long) = syncTask {
     base.delete(id)
   }

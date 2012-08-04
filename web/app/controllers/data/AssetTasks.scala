@@ -54,6 +54,16 @@ object AssetTasks extends Controller {
       List()
   }
 
+  val updateTaskForm = Form(mapping(
+    "id" -> longNumber,
+    "asset_id" -> longNumber,
+    "user" -> nonEmptyText,
+    "description" -> nonEmptyText,
+    "date" -> date("MM/dd HH:mm"),
+    "tags" -> list(text),
+    "icons" -> list(text))
+    (AssetTask.apply)(AssetTask.unapply))
+
   def asTaskGroup = (entry: (Asset, List[AssetTask]), m: Messages) =>
     ViewAssetTaskGroup(Assets.asset2view(entry._1, m), entry._2 map task2view)
 
@@ -87,6 +97,27 @@ object AssetTasks extends Controller {
   def addTask(task: AssetTask, user: String, action: HistoryAction = Add()): HistoryEntry = {
     val newTask = assetTasksDB.save(task)
     activityDB.save(new HistoryEntry(DB.NEW_ID, user, new Date, Add(), newTask))
+  }
+
+  def update = AssetMngAction {
+    implicit ctx =>
+      ctx.request.body.asJson match {
+        case Some(json) => updateTaskForm.bind(json).fold(
+          errors => BadRequest(errors.errorsAsJson),
+          task => {
+            updateTask(task, ctx.user)
+            Ok(generate(Map("status" -> ctx.m.views.tasks.successfullyUpdated,
+              "task" -> task2view(task))))
+          }
+        )
+        case _ => BadRequest(toJson(Map("status" -> "ERROR",
+          "cause" -> ("Failed to parse body as JSON: " + ctx.request.body.asText.getOrElse(ctx.request.body.toString)))))
+      }
+  }
+
+  def updateTask(newTask: AssetTask, user: String, action: HistoryAction = Modify()): HistoryEntry = {
+    val oldTask = assetTasksDB.update(newTask)
+    activityDB.save(new HistoryEntry(DB.NEW_ID, user, new Date, action, oldTask))
   }
 
   def delete(id: Long) = AssetMngAction {

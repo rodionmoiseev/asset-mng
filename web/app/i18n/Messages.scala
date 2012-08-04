@@ -121,10 +121,20 @@ trait Tasks {
   @Ru("Новая задача была добавлена")
   def successfullyAdded: String
 
+  @En("Task was updated")
+  @Ja("タスクを更新しました")
+  @Ru("Задача правлена")
+  def successfullyUpdated: String
+
   @En("Delete")
   @Ja("削除")
   @Ru("Удалить")
   def delete: String
+
+  @En("Edit")
+  @Ja("編集")
+  @Ru("Править")
+  def edit: String
 }
 
 @C10NMessages

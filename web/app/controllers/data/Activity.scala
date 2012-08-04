@@ -52,6 +52,7 @@ object Activity extends Controller {
           entry.action match {
             case Add() => delete(entry, ctx.user)
             case Delete() => add(entry, ctx.user)
+            case Modify() => update(entry, ctx.user)
             case _ => None
           }
         }
@@ -77,6 +78,13 @@ object Activity extends Controller {
     entry.obj match {
       case obj: Asset => Some(Assets.addAsset(obj, user, Undo(entry.action)))
       case obj: AssetTask => Some(AssetTasks.addTask(obj, user, Undo(entry.action)))
+      case _ => None
+    }
+  }
+
+  private def update(entry: HistoryEntry, user: String): Option[HistoryEntry] = {
+    entry.obj match {
+      case obj: AssetTask => Some(AssetTasks.updateTask(obj, user, Undo(entry.action)))
       case _ => None
     }
   }

@@ -79,24 +79,35 @@
                    <ul data-bind="template: { foreach: filteredTasks, afterRender: decorate }">
                        <li>
                            <div class="asset-task">
-                               <div class="asset-task-icons" data-bind="foreach: icons">
+                                <div class="asset-task-icons" data-bind="foreach: icons">
                                    <i data-bind="attr: { 'class': 'icon-' + $data }"></i>
-                               </div>
-                               <span data-bind="text: description"></span>
-                               <div data-bind="foreach: tags">
+                                </div>
+                                <div class="asset-task-description">
+                                    <span data-bind="text: description"></span>
+                                    <div class="edit-asset-task-description">
+                                        <textarea rows="3" cols="30" data-bind="value: description"></textarea>
+                                        <a href="#" class="btn">Save</a>
+                                    </div>
+                                </div>
+                                <div data-bind="foreach: tags">
                                    <span class="label" data-bind="text: $data"></span>
-                               </div>
-                               <div class="asset-task-user">
+                                </div>
+                                <div class="asset-task-user">
                                    <i class="icon-user"></i>
                                    <span data-bind="text: user"></span>
                                    <span data-bind="text: date"></span>
-                               </div>
+                                </div>
 
-                               <div class="asset-task-controls" data-bind="click: $parent.removeTask">
-                                    <a href="#" class="delete-task" rel="tooltip" title="@ctx.m.views.tasks.delete">
-                                        <i class="icon-trash"></i>
-                                    </a>
-                               </div>
+                                <a href="#"
+                                   class="edit-task asset-task-controls"
+                                   data-bind="click: $parent.editTask"
+                                   rel="tooltip"
+                                   title="@ctx.m.views.tasks.edit"><i class="icon-pencil"></i></a>
+                                <a href="#"
+                                   class="delete-task asset-task-controls"
+                                   rel="tooltip"
+                                   title="@ctx.m.views.tasks.delete"><i class="icon-trash"></i>
+                                </a>
                            </div>
                        </li>
                    </ul>

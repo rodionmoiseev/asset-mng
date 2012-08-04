@@ -61,6 +61,14 @@ div.hidden {
     opacity: 0.3;
 }
 
+.edit-asset-task-description{
+    display: none;
+}
+
+.edit-task{
+    right: 20px;
+}
+
 .asset-table>thead>tr {
     border-bottom: 1px solid #ccc;
 }

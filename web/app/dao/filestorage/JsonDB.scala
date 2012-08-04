@@ -52,6 +52,12 @@ abstract class JsonDB[A <: Persistent[A]](val file: String, val enc: String, val
     newItem
   }
 
+  def update(item: A): A = {
+    val oldItem = delete(item.id)
+    save(item)
+    oldItem
+  }
+
   def delete(id: Long): A = {
     val item = items.remove(items.indexWhere {
       _.id == id
