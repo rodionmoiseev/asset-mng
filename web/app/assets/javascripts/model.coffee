@@ -37,6 +37,7 @@ class AM.AssetList
        url: '/dao/assets/delete/' + asset.id
        type: 'DELETE'
        success: (response) =>
+         $('.delete-asset').tooltip('hide')
          @assets.remove(asset)
        error: (jqXHR) =>
          window.console.log(jqXHR.responseText)
@@ -87,6 +88,7 @@ class AM.AssetTaskGroup
       url: '/dao/tasks/delete/' + task.id
       type: 'DELETE'
       success: (response) =>
+        $('.delete-task').tooltip('hide')
         @tasks.remove(task)
       error: (jqXHR) =>
         window.console.log(jqXHR.responseText)
