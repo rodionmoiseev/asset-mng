@@ -88,11 +88,15 @@ class JsonAssetTasksDB(file: String, enc: String, idProvider: UIDProvider) exten
 }
 
 class JsonActivityDB(file: String, enc: String, idProvider: UIDProvider) extends JsonDB[HistoryEntry](file, enc, idProvider) with ActivityDB {
+  val MAX_HISTORY_SIZE = Integer.getInteger("assetmng.activity.maxHistorySize", 100)
+
+  override def all = super.all.takeRight(MAX_HISTORY_SIZE)
+
   def read(data: String): List[HistoryEntry] =
     Json.parse(data).as[Seq[JsValue]].map(_.as[HistoryEntry](new HistoryEntryReads)).toList
 
   override def write(data: List[HistoryEntry]) = Json.stringify(Json.toJson(
-    data map {
+    data.takeRight(MAX_HISTORY_SIZE) map {
       Json.toJson(_)(new HistoryEntryWrites)
     }
   ))
