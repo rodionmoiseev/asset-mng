@@ -48,6 +48,8 @@ dependencies{
   // User defined libraries
   compile 'c10n:c10n-core:1.1-SNAPSHOT'
   compile 'commons-io:commons-io:2.4'
+  compile 'org.apache.abdera:abdera-core:1.1.2'
+  compile 'org.apache.abdera:abdera-parser:1.1.2'
 
   // Default Gradle Scala plugin settings below (see Scala plugin page for up-to-date info)
 

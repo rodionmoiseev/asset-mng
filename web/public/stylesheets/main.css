@@ -87,6 +87,13 @@ td.centered {
 /*
  * Activity
  */
+#atom-feed-link{
+    float: right;
+    font-size: 10pt;
+    color: gray;
+    vertical-align: bottom;
+}
+
 .activity {
     position: relative;
     border-top: 3px solid #ddd;

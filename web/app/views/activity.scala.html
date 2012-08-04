@@ -1,9 +1,14 @@
 @()(implicit ctx: context.AssetMngContext)
 
+@import controllers.data.{routes => r}
+
 @main(Some(ctx.user), ctx.m, "activity", "activity"){
     <div id="activity-list">
         <div>
             <input type="text" size="30" data-bind="value: filter, valueUpdate: 'afterkeydown'" class="search-query" placeholder="Filter"><i class="icon-search"></i>
+            <a id="atom-feed-link" href="@r.Activity.atom?lang=@ctx.lang">
+                atom <img src='@routes.Assets.at("images/rss-feed-icon.png")' width="20" height="20">
+            </a>
         </div>
         <ul data-bind="template: { foreach: filteredActivities, afterRender: decorate }">
             <ul class="activity">

@@ -10,6 +10,7 @@ import context.AssetMngContext
 import i18n.Messages
 
 object Application extends Controller {
+  val HOSTNAME = System.getProperty("assetmng.hostname", "localhost")
 
   case class LoginForm(name: String, lang: String)
 
@@ -68,12 +69,13 @@ object Application extends Controller {
   def AssetMngAction(f: AssetMngContext => PlainResult) = {
     Action {
       request => {
+        val lang = getLang(request)
         val c10nMsgFactory = getC10NMsgFactory(request)
         request.session.get("user").map(user =>
-          f(AssetMngContext(user, c10nMsgFactory, request)).withSession(
+          f(AssetMngContext(user, lang, c10nMsgFactory, request)).withSession(
             request.session
               +("user", user)
-              +("c10n-lang", getLang(request))
+              +("c10n-lang", lang)
           )
         ).getOrElse {
           Redirect(routes.Application.login()).withSession(
@@ -84,7 +86,7 @@ object Application extends Controller {
     }
   }
 
-  private def getC10NMsgFactory(request: Request[AnyContent]): C10NMsgFactory = {
+  def getC10NMsgFactory(request: Request[AnyContent]): C10NMsgFactory = {
     val c10nLang = getLang(request)
     C10N.configure(new C10NConfigBase {
       def configure() {
@@ -99,5 +101,6 @@ object Application extends Controller {
     C10N.getRootFactory
   }
 
-  private def getLang(request: Request[AnyContent]): String =request.session.get("c10n-lang").getOrElse("en")
+  private def getLang(request: Request[AnyContent]): String =
+    request.session.get("c10n-lang").getOrElse(request.queryString.get("lang").getOrElse(Seq("en")).head)
 }

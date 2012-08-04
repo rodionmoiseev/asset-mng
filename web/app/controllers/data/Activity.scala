@@ -11,8 +11,11 @@ import models.HistoryEntry
 import view.ViewHistoryEntry
 import scala.Some
 import models.Delete
-import context.AssetMngContext
 import i18n.Messages
+import org.apache.abdera.Abdera
+import java.io.StringWriter
+import xml.PrettyPrinter
+import controllers.Application
 
 /**
  *
@@ -53,6 +56,36 @@ object Activity extends Controller {
     implicit ctx => {
       Ok(generate(activityDB.all.reverse map (activity2view(_, ctx.m))))
     }
+  }
+
+  def atom = Action {
+    implicit request =>
+      val m = Application.getC10NMsgFactory(request).get(classOf[Messages])
+      val history = activityDB.all.reverse
+      val abdera = new Abdera
+      val feed = abdera.newFeed
+      val url = "http://" + Application.HOSTNAME
+      feed.setId(url + "/activity/atom")
+      feed.setTitle("Asset-mng Activity")
+      history.headOption.map(entry => feed.setUpdated(entry.date))
+      feed.addLink(url + "/activity")
+      feed.addAuthor("rodion")
+      for (entry <- history) {
+        val feedEntry = feed.addEntry
+        feedEntry.setId(url + "/activity/atom/" + entry.id)
+        val title = m.activity.log(entry.obj.describe(m), entry.action.localise(m))
+        feedEntry.setTitle(title)
+        feedEntry.setSummaryAsHtml(title)
+        feedEntry.setUpdated(entry.date)
+        feedEntry.setPublished(entry.date)
+        feedEntry.addLink(url + "/activity")
+        feedEntry.addAuthor(entry.user)
+      }
+      val stringWriter = new StringWriter
+      feed.writeTo(stringWriter)
+      val xmlData = scala.xml.XML.loadString(stringWriter.toString)
+      Ok(new PrettyPrinter(40, 2).format(xmlData))
+        .withHeaders(("Cache-Control", "no-cache"), ("Content-Type", "application/atom+xml; charset=UTF-8"))
   }
 
   def undo(id: Long) = AssetMngAction {

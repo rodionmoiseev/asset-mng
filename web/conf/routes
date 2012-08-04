@@ -23,6 +23,8 @@ DELETE  /dao/tasks/delete/:id       controllers.data.AssetTasks.delete(id: Long)
 
 GET     /dao/activity               controllers.data.Activity.list
 POST    /dao/activity/undo/:id      controllers.data.Activity.undo(id: Long)
+# Activity Atom Feed
+GET     /activity/atom              controllers.data.Activity.atom
 
 GET     /dao/tags                   controllers.data.Tags.list
 
