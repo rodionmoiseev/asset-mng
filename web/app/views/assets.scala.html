@@ -74,7 +74,7 @@
                 </tr>
             </thead>
             <tbody data-bind="template: { foreach: filteredAssets, afterRender: decorate }">
-                <tr>
+                <tr data-bind="attr: { class: 'asset-mng-' + status_icon }">
                     <td><span data-bind="text: hostname"></span></td>
                     <td><span data-bind="text: ip"></span></td>
                     <td><span data-bind="text: description"></span></td>
@@ -84,6 +84,8 @@
                            data-bind="attr: { 'data-content': status_message, title: status_title }">
                             <i data-bind="attr: { class: status_icon }"></i>
                         </a>
+                        <!-- add hidden text to make the field sortable -->
+                        <div class="hidden" data-bind="text: status_icon"></div>
                     </td>
                     <td class="centered">
                         <a href="#" data-bind="click: $parent.removeAsset" class="delete-asset" rel="tooltip" title="@ctx.m.views.assets.delete">

@@ -84,6 +84,10 @@ td.centered {
     text-align: center;
 }
 
+tr.asset-mng-icon-exclamation-sign span{
+    color: red;
+}
+
 /*
  * Activity
  */
