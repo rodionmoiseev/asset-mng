@@ -61,7 +61,7 @@ dependencies{
   scalaApi 'org.scala-lang:scala-library:2.9.1'
 
   // Play 2.0 Framework public API
-  provided group: 'play', name: 'play_2.9.1', version: '2.0', configuration: 'compile'
+  provided group: 'play', name: 'play_2.9.1', version: '2.0.3', configuration: 'compile'
 
   //playManaged files('target/scala-2.9.1/classes_managed')
 }
