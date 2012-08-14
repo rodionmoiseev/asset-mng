@@ -11,6 +11,7 @@ case class UndoEntry(entryType: HistoryEntryType) extends HistoryObject {
   //undo-entry does not have a database associated and therefore does
   //not require an ID
   def id = -1L
+
   def describe(implicit m: Messages) = entryType.localise
 }
 
@@ -23,5 +24,5 @@ case class AssetEntry() extends HistoryEntryType {
 }
 
 case class AssetTaskEntry() extends HistoryEntryType {
-  def localise(implicit m: Messages)  = m.activity.assetTaskEntry
+  def localise(implicit m: Messages) = m.activity.assetTaskEntry
 }

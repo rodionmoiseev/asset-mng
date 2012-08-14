@@ -1,5 +1,4 @@
-import c10n.annotations.{En, DefaultC10NAnnotations}
-import c10n.{C10NConfigBase, C10N}
+import c10n.C10N
 import play.api._
 import play.api.Application
 import play.api.Play.current

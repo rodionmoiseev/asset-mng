@@ -42,7 +42,7 @@ object Assets extends Controller {
   def status2view = (status: AssetStatus, m: Messages) => {
     val ms = m.views.assets.status
     val stat = status.status match {
-      case "checking" =>(ms.checkingTitle, ms.checking(status.asset.ip))
+      case "checking" => (ms.checkingTitle, ms.checking(status.asset.ip))
       case "ok" => (ms.okTitle, ms.ok(status.asset.ip))
       case "unreachable" => (ms.unreachableTitle, ms.unreachable(status.asset.ip))
       case _ => (ms.errorTitle, ms.error(status.asset.ip, status.error))

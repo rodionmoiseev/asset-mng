@@ -3,7 +3,6 @@ package dao
 import filestorage._
 import models._
 import java.util.concurrent.atomic.AtomicLong
-import collection.mutable
 import models.Asset
 import models.HistoryEntry
 import models.AssetTask
@@ -19,7 +18,8 @@ object Module {
   }
 }
 
-class MillisecBasedUIDProvider extends UIDProvider{
+class MillisecBasedUIDProvider extends UIDProvider {
   val uid: AtomicLong = new AtomicLong(System.currentTimeMillis())
+
   def nextUID = uid.getAndIncrement()
 }
