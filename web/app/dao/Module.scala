@@ -21,5 +21,5 @@ object Module {
 class MillisecBasedUIDProvider extends UIDProvider {
   val uid: AtomicLong = new AtomicLong(System.currentTimeMillis())
 
-  def nextUID = uid.getAndIncrement()
+  def nextUID = uid.getAndIncrement
 }

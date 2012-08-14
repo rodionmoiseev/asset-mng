@@ -17,7 +17,7 @@ class SafeFileWriter(val path: String, val enc: String) {
     if (!file.getParentFile.exists)
       if (!file.getParentFile.mkdirs)
         throw new IOException("Could not created db directory: " + file.getParentFile)
-    init
+    init()
     FileUtils.write(tmp, data, enc)
     file.renameTo(bak)
     tmp.renameTo(file)
@@ -25,14 +25,14 @@ class SafeFileWriter(val path: String, val enc: String) {
   }
 
   def read(): Option[String] = {
-    init
+    init()
     if (file.exists)
       Some(FileUtils.readFileToString(file, enc))
     else
       None
   }
 
-  private def init {
+  private def init() {
     if (tmp.exists) tmp.delete
     if (bak.exists) {
       if (file.exists) file.delete

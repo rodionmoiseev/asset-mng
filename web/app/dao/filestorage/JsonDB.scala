@@ -33,7 +33,7 @@ abstract class JsonDB[A <: Persistent[A]](val file: String, val enc: String, val
   private def sync() {
     if (!synced) {
       val data = frw.read() match {
-        case Some(data) => read(data)
+        case Some(d) => read(d)
         case None => List()
       }
       items ++= data
