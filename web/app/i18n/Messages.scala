@@ -8,10 +8,6 @@ import context.AssetMngContext
  *
  * @author rodion
  */
-object Messages {
-  implicit val req2messages: (AssetMngContext => Messages) = _.m
-}
-
 @C10NMessages
 trait Messages {
   def main: Main
