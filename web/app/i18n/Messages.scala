@@ -248,6 +248,16 @@ trait Asset {
   @Ru("Статус")
   def status: String
 
+  @En("Usage Status")
+  @Ja("使用状況")
+  @Ru("Статус")
+  def usageStatus: String
+
+  @En("Used")
+  @Ja("使用中")
+  @Ru("Используется")
+  def used: String
+
   @En("Not used by anyone")
   @Ja("空いています")
   @Ru("Не используется")

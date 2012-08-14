@@ -36,6 +36,7 @@ object Assets extends Controller {
       asset.description,
       asset.admin,
       asset.parent_id,
+      assetUsageStatus(asset, m),
       status2view(assetStatusSystem.getStatus(asset), m))
 
   def status2view = (status: AssetStatus, m: Messages) => {
@@ -48,6 +49,9 @@ object Assets extends Controller {
     }
     ViewAssetStatus(status.status, stat._1, stat._2, status.lastCheckedStr)
   }
+
+  def assetUsageStatus(asset: Asset, m: Messages) =
+    assetTasksDB.all.find(_.asset_id == asset.id).map(task => m.asset.used).getOrElse(m.asset.available)
 
   def form2asset = (asset: AssetForm) =>
     Asset(

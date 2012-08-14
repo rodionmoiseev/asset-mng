@@ -7,6 +7,7 @@ class AM.Asset
     @ip = ko.observable(asset.ip)
     @description = ko.observable(asset.description)
     @admin = ko.observable(asset.admin)
+    @usageStatus = ko.observable(asset.usageStatus)
     @status_message = asset.status.message + '<br><small>' + asset.status.lastChecked + '</small>'
     @status_title = asset.status.title
     @status_icon = switch asset.status.status

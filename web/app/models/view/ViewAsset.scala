@@ -11,4 +11,5 @@ case class ViewAsset(id: Long,
                      description: String,
                      admin: String,
                      parent_id: Option[Long],
+                     usageStatus: String,
                      status: ViewAssetStatus)

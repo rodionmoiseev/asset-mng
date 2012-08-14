@@ -58,7 +58,7 @@ $ ->
   #
   $('#myTable').tablesorter
     headers:
-      5:
+      6:
         sorter: false
   ko.bindingHandlers.triggerUpdate =
     update: (element, valueAccessor) ->

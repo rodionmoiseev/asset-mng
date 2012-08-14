@@ -69,6 +69,7 @@
                     <th>@ctx.m.asset.ip</th>
                     <th>@ctx.m.asset.description</th>
                     <th>@ctx.m.asset.admin</th>
+                    <th>@ctx.m.asset.usageStatus</th>
                     <th>@ctx.m.asset.status</th>
                     <th></th>
                 </tr>
@@ -79,6 +80,7 @@
                     <td><span data-bind="text: ip"></span></td>
                     <td><span data-bind="text: description"></span></td>
                     <td><span data-bind="text: admin"></span></td>
+                    <td><span data-bind="text: usageStatus"></span></td>
                     <td class="centered">
                         <a href="#" class="asset-status" rel="popover"
                            data-bind="attr: { 'data-content': status_message, title: status_title }">
