@@ -13,6 +13,7 @@ case class Asset(
                   ip: String,
                   description: String,
                   admin: String,
+                  tags: Option[List[String]],//wrap in Option for backwards compatibility
                   parent_id: Option[Long]) extends HistoryObject with Persistent[Asset] {
   def withId(id: Long) = copy(id)
 

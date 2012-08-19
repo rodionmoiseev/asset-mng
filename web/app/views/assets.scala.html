@@ -41,6 +41,13 @@
                                 <p class="help-block" data-bind="text: errors.admin"></p>
                             </div>
                         </div>
+                        <div class="control-group" data-bind="css: { error: errors.tags }">
+                            <label>@ctx.m.asset.tags</label>
+                            <div class="controls">
+                                <input id="tags" data-bind="value: tags">
+                                <p class="help-block" data-bind="text: errors.tags"></p>
+                            </div>
+                        </div>
                         <input class="btn btn-success" type="submit" value="@ctx.m.buttons.save">
                         <a id="btn-cancel-add-asset" class="btn btn-danger">
                             <i class="icon-remove"></i>
@@ -76,7 +83,12 @@
             </thead>
             <tbody data-bind="template: { foreach: filteredAssets, afterRender: decorate }">
                 <tr data-bind="attr: { class: 'asset-mng-' + status_icon }">
-                    <td><span data-bind="text: hostname"></span></td>
+                    <td>
+                        <span data-bind="text: hostname"></span>
+                        <div data-bind="foreach: tags">
+                           <span class="label" data-bind="text: $data"></span>
+                        </div>
+                    </td>
                     <td><span data-bind="text: ip"></span></td>
                     <td><span data-bind="text: description"></span></td>
                     <td><span data-bind="text: admin"></span></td>

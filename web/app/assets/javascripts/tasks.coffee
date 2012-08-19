@@ -61,23 +61,12 @@ $ ->
     $(@).css { opacity: 0.3 }
 
   #
-  # Typeahead (auto-completion) related code
+  # Initialise typeahead (auto-completion)
   #
-  typeaheadUpdater = (item) ->
-    res = @query.split(',')[0..-2]
-    res.push item
-    res = (x.trim() for x in res)
-    res.join ", "
-  typeaheadMatcher = (item) -> ~item.toLowerCase().indexOf(@query.toLowerCase().split(',').pop().trim())
+  utils = new AM.Utils
+  $.getJSON "/dao/tags", (tags) =>
+    utils.addTypeahead $('#tags'), source: tags
 
-  $.getJSON "/dao/tags", (tags) ->
-    $('#tags').typeahead
-      source: tags
-      updater: typeaheadUpdater
-      matcher: typeaheadMatcher
-
-  $("#icons").typeahead
+  utils.addTypeahead $("#icons"),
     source: window.twitter_bootstrap_icons
-    updater: typeaheadUpdater
-    matcher: typeaheadMatcher
     highlighter: (item) -> '<i class="icon-' + item + '"></i> ' + item

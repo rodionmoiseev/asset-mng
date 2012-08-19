@@ -40,19 +40,8 @@ object AssetTasks extends Controller {
       user,
       taskForm.description,
       new Date,
-      toDelimitedList(taskForm.tags),
-      toDelimitedList(taskForm.icons))
-
-  def toDelimitedList(tags: String): List[String] = {
-    if (!tags.trim.isEmpty)
-      tags.split(",").map {
-        _.trim
-      }.collect {
-        case s if !s.isEmpty => s
-      }.toList
-    else
-      List()
-  }
+      Tags.toDelimitedList(taskForm.tags),
+      Tags.toDelimitedList(taskForm.icons))
 
   val updateTaskForm = Form(mapping(
     "id" -> longNumber,

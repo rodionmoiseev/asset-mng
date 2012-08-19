@@ -35,6 +35,7 @@ object Assets extends Controller {
       asset.ip,
       asset.description,
       asset.admin,
+      asset.tags.getOrElse(List()),
       asset.parent_id,
       assetUsageStatus(asset, m),
       status2view(assetStatusSystem.getStatus(asset), m))
@@ -60,12 +61,14 @@ object Assets extends Controller {
       asset.ip,
       asset.description,
       asset.admin,
+      Some(Tags.toDelimitedList(asset.tags)),
       asset.parent_id)
 
   case class AssetForm(hostname: String,
                        ip: String,
                        description: String,
                        admin: String,
+                       tags: String,
                        parent_id: Option[Long])
 
   val assetForm = Form(mapping(
@@ -73,6 +76,7 @@ object Assets extends Controller {
     "ip" -> nonEmptyText.verifying("Must be a valid IPv4/v6 address", IPUtils.isIPAddress _),
     "description" -> text,
     "admin" -> text,
+    "tags" -> text,
     "parent_id" -> optional(longNumber))
     (AssetForm.apply)(AssetForm.unapply))
 

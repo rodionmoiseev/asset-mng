@@ -65,3 +65,9 @@ $ ->
       ko.utils.unwrapObservable valueAccessor()
       $(element).trigger 'update'
 
+  #
+  # Initialise typeahead (auto-completion)
+  #
+  $.getJSON "/dao/tags", (tags) =>
+    utils = new AM.Utils
+    utils.addTypeahead $('#tags'), source: tags

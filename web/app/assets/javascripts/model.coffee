@@ -1,5 +1,43 @@
 window.AM = {}
 
+class AM.Utils
+  contains: (str, part) ->
+    str.toLowerCase().indexOf(part) != -1
+
+  listContains: (list, part) ->
+    for item in list
+      if @contains(item, part) then return true
+    false
+
+  #
+  # Merge to maps into one.
+  # Key in the second argument will override
+  # the ones in the first.
+  merge: (a, b) ->
+    res = new Object
+    for k,v of a
+      res[k] = v
+    for k,v of b
+      res[k] = v
+    res
+
+  #
+  # Add typeahead (auto-completion) functionality to
+  # the given DOM element(s), with custom settings object
+  addTypeahead: (domElements, typeAheadSettings) =>
+    typeaheadUpdater = (item) ->
+      res = @query.split(',')[0..-2]
+      res.push item
+      res = (x.trim() for x in res)
+      res.join ", "
+    typeaheadMatcher = (item) -> ~item.toLowerCase().indexOf(@query.toLowerCase().split(',').pop().trim())
+
+    defaultSettings =
+      updater: typeaheadUpdater
+      matcher: typeaheadMatcher
+    domElements.typeahead(@merge defaultSettings, typeAheadSettings)
+
+
 class AM.Asset
   constructor: (asset) ->
     @id = asset.id
@@ -7,6 +45,7 @@ class AM.Asset
     @ip = ko.observable(asset.ip)
     @description = ko.observable(asset.description)
     @admin = ko.observable(asset.admin)
+    @tags = asset.tags
     @usageStatus = ko.observable(asset.usageStatus)
     @status_message = asset.status.message + '<br><small>' + asset.status.lastChecked + '</small>'
     @status_title = asset.status.title
@@ -16,19 +55,19 @@ class AM.Asset
                       when "checking" then "icon-time"
                       else "icon-question-sign"
 
-class AM.AssetList
+class AM.AssetList extends AM.Utils
   constructor: (assets) ->
     @filter = ko.observable('')
     @assets = ko.observableArray([])
     @assets($.map assets, (asset) -> new AM.Asset(asset))
     @filteredAssets = ko.computed =>
       lfilter = @filter().toLowerCase()
-      if !lfilter then @assets() else ko.utils.arrayFilter @assets(), (asset) ->
-        contains = (str, part) -> str.indexOf(part) != -1
-        (contains asset.hostname().toLowerCase(), lfilter) or
-          (contains asset.ip().toLowerCase(), lfilter) or
-          (contains asset.admin().toLowerCase(), lfilter) or
-          (contains asset.description().toLowerCase(), lfilter)
+      if !lfilter then @assets() else ko.utils.arrayFilter @assets(), (asset) =>
+        (@contains asset.hostname(), lfilter) or
+          (@contains asset.ip(), lfilter) or
+          (@contains asset.admin(), lfilter) or
+          (@contains asset.description(), lfilter) or
+          (@listContains asset.tags, lfilter)
 
   addAsset: (asset) ->
     @assets.unshift new AM.Asset(asset)
@@ -65,7 +104,7 @@ class AM.AssetTask
   hideControls: (item, event) ->
     $(event.target).find(".asset-controls").animate({opacity: 0.2}, 100)
 
-class AM.AssetTaskGroup
+class AM.AssetTaskGroup extends AM.Utils
   constructor: (parent, taskGroup) ->
     @parent = parent
     @asset = ko.observable(new AM.Asset(taskGroup.asset))
@@ -80,9 +119,10 @@ class AM.AssetTaskGroup
     found?
 
   taskMatches: (task, filter) ->
-    contains = (str, part) -> str.indexOf(part) != -1
-    (contains task.description().toLowerCase(), filter) or
-      (contains task.user().toLowerCase(), filter)
+    (@contains task.description(), filter) or
+      (@contains task.user(), filter) or
+      (@listContains task.tags, filter) or
+      (@listContains task.icons, filter)
 
   removeTask: (task) =>
     $.ajax
@@ -139,18 +179,17 @@ class AM.Activity
     @date = activity.date
     @canUndo = activity.canUndo
 
-class AM.ActivityList
+class AM.ActivityList extends AM.Utils
   constructor: (activities) ->
     @filter = ko.observable('')
     @activities = ko.observableArray([])
     @activities($.map activities, (activity) -> new AM.Activity(activity))
     @filteredActivities = ko.computed =>
       lfilter = @filter().toLowerCase()
-      if !lfilter then @activities() else ko.utils.arrayFilter @activities(), (activity) ->
-        contains = (str, part) -> str.indexOf(part) != -1
-        (contains activity.user.toLowerCase(), lfilter) or
-          (contains activity.action.toLowerCase(), lfilter) or
-          (contains activity.obj.toLowerCase(), lfilter)
+      if !lfilter then @activities() else ko.utils.arrayFilter @activities(), (activity) =>
+        (@contains activity.user, lfilter) or
+          (@contains activity.action, lfilter) or
+          (@contains activity.obj, lfilter)
 
   undo: (activity) =>
     $.ajax

@@ -18,7 +18,19 @@ object Tags extends Controller {
       Ok(generate(collectTags()))
   }
 
+  def toDelimitedList(tags: String): List[String] = {
+    if (!tags.trim.isEmpty)
+      tags.split(",").map {
+        _.trim
+      }.collect {
+        case s if !s.isEmpty => s
+      }.toList
+    else
+      List()
+  }
+
   private def collectTags(): Set[String] = {
-    assetTasksDB.all.toSet.map((task: AssetTask) => task.tags).flatten
+    assetTasksDB.all.toSet.map((task: AssetTask) => task.tags).flatten ++
+    assetsDB.all.toSet.map((asset: Asset) => asset.tags.getOrElse(List())).flatten
   }
 }

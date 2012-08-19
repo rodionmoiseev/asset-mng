@@ -243,6 +243,11 @@ trait Asset {
   @Ru("Администратор")
   def admin: String
 
+  @En("Tags")
+  @Ja("タグ")
+  @Ru("Тэги")
+  def tags: String
+
   @En("Status")
   @Ja("死活状況")
   @Ru("Статус")
