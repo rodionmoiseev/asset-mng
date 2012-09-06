@@ -1,7 +1,8 @@
 @()(implicit ctx: context.AssetMngContext)
 
 @main(Some(ctx.user), ctx.m, "tasks", "tasks"){
-    <div class="well">
+    <div class="well well-small logst-well">
+        <h4><!-- Could not come up with a good title, but needed anyway for spacing --></h4>
         <div>
             <i class="icon-plus-sign"></i>
             <a id="link-add-task" href="#">@ctx.m.views.tasks.addTask</a>
@@ -64,10 +65,10 @@
 
         <ul data-bind="foreach: filteredTaskGroups">
             <li>
-               <div class="well">
-                   <h3 data-bind="with: asset">
+               <div class="well well-small logst-well">
+                   <h4 data-bind="with: asset">
                        <span data-bind="text: hostname"></span>
-                   </h3>
+                   </h4>
                    <!-- ko if: tasks().length == 0 -->
                    <ul>
                        <li>
