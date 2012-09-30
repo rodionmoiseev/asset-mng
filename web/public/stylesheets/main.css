@@ -47,6 +47,10 @@ div.hidden {
  * Assets
  */
 
+#add-asset-form {
+    margin-bottom: 0px; /* overrides bootstrap default margin of 20px */
+}
+
 .asset-task-icons{
     display: inline;
     text-align: left;

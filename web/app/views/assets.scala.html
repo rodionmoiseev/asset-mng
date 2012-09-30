@@ -19,7 +19,7 @@
                   role="dialog"
                   aria-hidden="true">
                 <div class="modal-header">Add/Update <span data-bind="text: hostname"></span></div>
-                <form data-bind="submit: save">
+                <form id="add-asset-form" data-bind="submit: save">
                     <div class="modal-body">
                         <fieldset>
                             <div class="control-group" data-bind="css: { error: errors.hostname }">
