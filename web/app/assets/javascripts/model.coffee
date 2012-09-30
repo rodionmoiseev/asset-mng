@@ -41,6 +41,8 @@ class AM.Utils
 class AM.Asset
   constructor: (asset) ->
     @id = asset.id
+    @parent_id = asset.parent_id
+    @parent = ko.observable()
     @hostname = ko.observable('')
     @ip = ko.observable('')
     @description = ko.observable('')
@@ -57,6 +59,7 @@ class AM.Asset
                       else "icon-question-sign"
 
   update: (asset) ->
+    @parent_id = asset.parent_id
     @hostname(asset.hostname)
     @ip(asset.ip)
     @description(asset.description)
@@ -68,6 +71,7 @@ class AM.AssetList extends AM.Utils
     @filter = ko.observable('')
     @assets = ko.observableArray([])
     @assets($.map assets, (asset) -> new AM.Asset(asset))
+    ko.utils.arrayForEach @assets(), (asset) => @setAssetParent asset
     @assetForm = assetForm
     @filteredAssets = ko.computed =>
       lfilter = @filter().toLowerCase()
@@ -83,7 +87,9 @@ class AM.AssetList extends AM.Utils
     if match
       match.update newAsset
     else
-      @assets.unshift new AM.Asset(newAsset)
+      match = new AM.Asset(newAsset)
+      @assets.unshift match
+    @setAssetParent match
 
   removeAsset: (asset) =>
     $.ajax
@@ -98,6 +104,9 @@ class AM.AssetList extends AM.Utils
   editAsset: (asset) =>
     @assetForm.copyFromAsset asset
     @assetForm.show()
+
+  setAssetParent: (asset) =>
+    asset.parent(ko.utils.arrayFirst @assets(), (asset2) -> asset2.id is asset.parent_id)
 
   decorate: ->
     $('.delete-asset').tooltip
@@ -188,6 +197,9 @@ class AM.AssetTaskGroupList
   addTask: (task) ->
     ko.utils.arrayForEach @taskGroups(), (taskGroup) ->
       if taskGroup.asset().id == task.asset_id then taskGroup.tasks.unshift new AM.AssetTask(task)
+
+  setAssetParents: (assetList) ->
+    ko.utils.arrayForEach @taskGroups(), (taskGroup) -> assetList.setAssetParent taskGroup.asset()
 
 class AM.Activity
   constructor: (activity) ->

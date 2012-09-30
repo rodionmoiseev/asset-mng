@@ -1,6 +1,8 @@
 class NewAssetForm
   constructor: ->
     @id = -1
+    @parent = ko.observable()
+    @parent_id = ko.computed(=> @parent()?.id)
     @hostname = ko.observable('')
     @ip = ko.observable('')
     @description = ko.observable('')
@@ -16,6 +18,7 @@ class NewAssetForm
   copyFromAsset: (asset) ->
     @clear()
     @id = asset.id
+    @parent(asset.parent())
     @hostname(asset.hostname())
     @ip(asset.ip())
     @description(asset.description())
@@ -28,6 +31,7 @@ class NewAssetForm
 
   clear: ->
     @id = -1
+    @parent(null)
     @[field]('') for field in @fields
     @errors[name]('') for name in @fields
 
@@ -42,7 +46,7 @@ class NewAssetForm
     $.ajax
       url: postUrl
       type: 'POST'
-      data: ko.toJSON(@, ['id', 'hostname', 'ip', 'description', 'admin', 'tags'])
+      data: ko.toJSON(@, ['id', 'parent_id', 'hostname', 'ip', 'description', 'admin', 'tags'])
       contentType: 'application/json'
       success: (response) =>
         r = JSON.parse(response)
@@ -64,9 +68,9 @@ $ ->
   # Data bindings
   #
   $.getJSON '/dao/assets', (allData) ->
-    ko.applyBindings(assetForm, $('#form-add-asset')[0])
     assetList = new AM.AssetList(allData, assetForm)
     assetForm.setAssetList assetList
+    ko.applyBindings(assetForm, $('#form-add-asset')[0])
     ko.applyBindings(assetList, $('#assets-list')[0])
 
   #

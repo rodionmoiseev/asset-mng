@@ -68,6 +68,11 @@
                <div class="well well-small logst-well">
                    <h4 data-bind="with: asset">
                        <span data-bind="text: hostname"></span>
+                       <!-- ko if: parent() != undefined -->
+                           <span class="task-vm-parent-name">
+                               @ctx.m.asset.guestVMAt<span data-bind="text: parent().hostname"></span>
+                           </span>
+                       <!-- /ko -->
                    </h4>
                    <!-- ko if: tasks().length == 0 -->
                    <ul>

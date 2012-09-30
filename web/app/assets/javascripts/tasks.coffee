@@ -40,10 +40,11 @@ class NewTaskForm
 $ ->
   $.getJSON "/dao/tasks/groupedByAsset", (allData) ->
     taskGroupList = new AM.AssetTaskGroupList(allData)
-    ko.applyBindings(taskGroupList, $('#tasks-list')[0])
     $.getJSON '/dao/assets', (allAssets) ->
       assetList = new AM.AssetList(allAssets)
       ko.applyBindings(new NewTaskForm(taskGroupList, assetList), $('#form-add-task')[0])
+      taskGroupList.setAssetParents assetList
+    ko.applyBindings(taskGroupList, $('#tasks-list')[0])
 
   #
   # New Task Form click handlers

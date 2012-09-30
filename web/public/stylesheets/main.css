@@ -27,6 +27,11 @@ div.hidden {
     z-index: 9999;
 }
 
+.vm-parent-name {
+    float: right;
+    color: gray;
+    font-size: 8pt;
+}
 /*
  * Tasks
  */
@@ -41,6 +46,13 @@ div.hidden {
 
 .edit-asset{
     margin-right: 5px;
+}
+
+.task-vm-parent-name {
+    float: right;
+    color: gray;
+    font-size: 8pt;
+    margin-left: 5px;
 }
 
 /*

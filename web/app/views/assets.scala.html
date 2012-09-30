@@ -22,6 +22,13 @@
                 <form id="add-asset-form" data-bind="submit: save">
                     <div class="modal-body">
                         <fieldset>
+                            <div class="control-group">
+                                <label>@ctx.m.asset.parentHostname</label>
+                                <div class="controls">
+                                    <select data-bind="options: assetList.assets, optionsText: 'hostname', value: parent, optionsCaption: '@ctx.m.asset.physicalServer'">
+                                    </select>
+                                </div>
+                            </div>
                             <div class="control-group" data-bind="css: { error: errors.hostname }">
                                 <label>@ctx.m.asset.hostname</label>
                                 <div class="controls">
@@ -96,6 +103,11 @@
                 <tr data-bind="attr: { class: 'asset-mng-' + status_icon }">
                     <td>
                         <span data-bind="text: hostname"></span>
+                        <!-- ko if: parent() != undefined -->
+                            <span class="vm-parent-name">
+                                &#64;<span data-bind="text: parent().hostname"></span>
+                            </span>
+                        <!-- /ko -->
                         <div data-bind="foreach: tags">
                            <span class="label" data-bind="text: $data"></span>
                         </div>

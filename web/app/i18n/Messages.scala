@@ -228,6 +228,11 @@ trait Asset {
   @Ru("Имя хоста")
   def hostname: String
 
+  @En("Parent VM hostname")
+  @Ja("親VMのホスト名")
+  @Ru("Имя главного хоста VM")
+  def parentHostname: String
+
   @En("Name")
   @Ja("登録名")
   @Ru("Имя")
@@ -277,6 +282,16 @@ trait Asset {
   @Ja("{0}アセット")
   @Ru("Актив {0}")
   def describe(hostname: String): String
+
+  @En("Physical server")
+  @Ja("実機")
+  @Ru("Физический сервер")
+  def physicalServer: String
+
+  @En("guest VM on ")
+  @Ja("ゲストVM @")
+  @Ru("гостевая VM на ")
+  def guestVMAt: String
 }
 
 @C10NMessages
