@@ -3,58 +3,68 @@
 @main(Some(ctx.user), ctx.m, "assets", "assets"){
     <div class="well well-small logst-well">
         <h4><!-- Could not come up with a good title, but needed anyway for spacing --></h4>
+
+        <div class="hidden alert alert-success" id="alert-add-asset">
+            <a class="close" href="#">&times;</a>
+            <span></span>
+        </div>
+
         <div>
             <i class="icon-plus-sign"></i>
             <a id="link-add-asset" href="#">@ctx.m.views.assets.addAsset</a>
 
-            <div class="hidden alert alert-success" id="alert-add-asset">
-                <a class="close" href="#">&times;</a>
-                <span></span>
-            </div>
-
-            <div id="form-add-asset" class="hidden">
+            <div id="form-add-asset"
+                  class="modal hide fade"
+                  tabIndex="-1"
+                  role="dialog"
+                  aria-hidden="true">
+                <div class="modal-header">Add/Update <span data-bind="text: hostname"></span></div>
                 <form data-bind="submit: save">
-                    <fieldset>
-                        <div class="control-group" data-bind="css: { error: errors.hostname }">
-                            <label>@ctx.m.asset.hostname</label>
-                            <div class="controls">
-                                <input data-bind="value: hostname">
-                                <p class="help-block" data-bind="text: errors.hostname"></p>
+                    <div class="modal-body">
+                        <fieldset>
+                            <div class="control-group" data-bind="css: { error: errors.hostname }">
+                                <label>@ctx.m.asset.hostname</label>
+                                <div class="controls">
+                                    <input data-bind="value: hostname">
+                                    <p class="help-block" data-bind="text: errors.hostname"></p>
+                                </div>
                             </div>
-                        </div>
-                        <div class="control-group" data-bind="css: { error: errors.ip }">
-                            <label>@ctx.m.asset.ip</label>
-                            <div class="controls">
-                                <input data-bind="value: ip">
-                                <p class="help-block" data-bind="text: errors.ip"></p>
+                            <div class="control-group" data-bind="css: { error: errors.ip }">
+                                <label>@ctx.m.asset.ip</label>
+                                <div class="controls">
+                                    <input data-bind="value: ip">
+                                    <p class="help-block" data-bind="text: errors.ip"></p>
+                                </div>
                             </div>
-                        </div>
-                        <div class="control-group">
-                            <label>@ctx.m.asset.description</label>
-                            <div class="controls">
-                                <textarea rows="3" cols="30" data-bind="value: description"></textarea>
+                            <div class="control-group">
+                                <label>@ctx.m.asset.description</label>
+                                <div class="controls">
+                                    <textarea rows="3" cols="30" data-bind="value: description"></textarea>
+                                </div>
                             </div>
-                        </div>
-                        <div class="control-group" data-bind="css: { error: errors.admin }">
-                            <label>@ctx.m.asset.admin</label>
-                            <div class="controls">
-                                <input data-bind="value: admin">
-                                <p class="help-block" data-bind="text: errors.admin"></p>
+                            <div class="control-group" data-bind="css: { error: errors.admin }">
+                                <label>@ctx.m.asset.admin</label>
+                                <div class="controls">
+                                    <input data-bind="value: admin">
+                                    <p class="help-block" data-bind="text: errors.admin"></p>
+                                </div>
                             </div>
-                        </div>
-                        <div class="control-group" data-bind="css: { error: errors.tags }">
-                            <label>@ctx.m.asset.tags</label>
-                            <div class="controls">
-                                <input id="tags" data-bind="value: tags">
-                                <p class="help-block" data-bind="text: errors.tags"></p>
+                            <div class="control-group" data-bind="css: { error: errors.tags }">
+                                <label>@ctx.m.asset.tags</label>
+                                <div class="controls">
+                                    <input id="tags" data-bind="value: tags">
+                                    <p class="help-block" data-bind="text: errors.tags"></p>
+                                </div>
                             </div>
-                        </div>
+                        </fieldset>
+                    </div>
+                    <div class="modal-footer">
                         <input class="btn btn-success" type="submit" value="@ctx.m.buttons.save">
-                        <a id="btn-cancel-add-asset" class="btn btn-danger">
+                        <a class="btn btn-danger" data-dismiss="modal">
                             <i class="icon-remove"></i>
                             @ctx.m.buttons.cancel
                         </a>
-                    </fieldset>
+                    </div>
                 </form>
             </div>
         </div>
@@ -103,7 +113,16 @@
                         <div class="hidden" data-bind="text: status_icon"></div>
                     </td>
                     <td class="centered">
-                        <a href="#" data-bind="click: $parent.removeAsset" class="delete-asset" rel="tooltip" title="@ctx.m.views.assets.delete">
+                        <a href="#"
+                           class="edit-asset"
+                           rel="tooltip"
+                           data-bind="click: $parent.editAsset"
+                           title="@ctx.m.views.tasks.edit"><i class="icon-pencil"></i></a>
+                        <a href="#"
+                           class="delete-asset"
+                           data-bind="click: $parent.removeAsset"
+                           rel="tooltip"
+                           title="@ctx.m.views.assets.delete">
                             <i class="icon-trash"></i>
                         </a>
                     </td>

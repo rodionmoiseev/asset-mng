@@ -14,6 +14,7 @@ GET     /logout                     controllers.Application.logout
 # Json Data Access
 GET     /dao/assets                 controllers.data.Assets.list
 POST    /dao/assets/add             controllers.data.Assets.add
+POST    /dao/assets/update          controllers.data.Assets.update
 DELETE  /dao/assets/delete/:id      controllers.data.Assets.delete(id: Long)
 
 GET     /dao/tasks/groupedByAsset   controllers.data.AssetTasks.groupedByAsset

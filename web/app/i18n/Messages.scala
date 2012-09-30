@@ -93,10 +93,15 @@ trait Assets {
   @Ru("Импортировать активы")
   def importAssets: String
 
-  @En("New asset was added")
-  @Ja("アセットを登録しました")
-  @Ru("Новый актив был добавлен")
-  def successfullyAdded: String
+  @En("New asset {0} was added")
+  @Ja("{0} アセットを登録しました")
+  @Ru("Новый актив {0} был добавлен")
+  def successfullyAdded(hostname: String): String
+
+  @En("Asset {0} was updated")
+  @Ja("{0} アセットを更新しました")
+  @Ru("Актив {0} правлен")
+  def successfullyUpdated(hostname: String): String
 
   @En("Delete")
   @Ja("削除")

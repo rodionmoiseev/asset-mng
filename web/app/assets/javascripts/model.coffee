@@ -10,7 +10,7 @@ class AM.Utils
     false
 
   #
-  # Merge to maps into one.
+  # Merge two maps into one.
   # Key in the second argument will override
   # the ones in the first.
   merge: (a, b) ->
@@ -41,11 +41,12 @@ class AM.Utils
 class AM.Asset
   constructor: (asset) ->
     @id = asset.id
-    @hostname = ko.observable(asset.hostname)
-    @ip = ko.observable(asset.ip)
-    @description = ko.observable(asset.description)
-    @admin = ko.observable(asset.admin)
-    @tags = asset.tags
+    @hostname = ko.observable('')
+    @ip = ko.observable('')
+    @description = ko.observable('')
+    @admin = ko.observable('')
+    @tags = ko.observableArray([])
+    @update asset
     @usageStatus = ko.observable(asset.usageStatus)
     @status_message = asset.status.message + '<br><small>' + asset.status.lastChecked + '</small>'
     @status_title = asset.status.title
@@ -55,11 +56,19 @@ class AM.Asset
                       when "checking" then "icon-time"
                       else "icon-question-sign"
 
+  update: (asset) ->
+    @hostname(asset.hostname)
+    @ip(asset.ip)
+    @description(asset.description)
+    @admin(asset.admin)
+    @tags(asset.tags)
+
 class AM.AssetList extends AM.Utils
-  constructor: (assets) ->
+  constructor: (assets, assetForm) ->
     @filter = ko.observable('')
     @assets = ko.observableArray([])
     @assets($.map assets, (asset) -> new AM.Asset(asset))
+    @assetForm = assetForm
     @filteredAssets = ko.computed =>
       lfilter = @filter().toLowerCase()
       if !lfilter then @assets() else ko.utils.arrayFilter @assets(), (asset) =>
@@ -67,10 +76,14 @@ class AM.AssetList extends AM.Utils
           (@contains asset.ip(), lfilter) or
           (@contains asset.admin(), lfilter) or
           (@contains asset.description(), lfilter) or
-          (@listContains asset.tags, lfilter)
+          (@listContains asset.tags(), lfilter)
 
-  addAsset: (asset) ->
-    @assets.unshift new AM.Asset(asset)
+  addAsset: (newAsset) ->
+    match = ko.utils.arrayFirst @assets(), (asset) -> asset.id is newAsset.id
+    if match
+      match.update newAsset
+    else
+      @assets.unshift new AM.Asset(newAsset)
 
   removeAsset: (asset) =>
     $.ajax
@@ -82,8 +95,14 @@ class AM.AssetList extends AM.Utils
        error: (jqXHR) =>
          window.console.log(jqXHR.responseText)
 
+  editAsset: (asset) =>
+    @assetForm.copyFromAsset asset
+    @assetForm.show()
+
   decorate: ->
     $('.delete-asset').tooltip
+      placement: 'right'
+    $('.edit-asset').tooltip
       placement: 'right'
     $('.asset-status').popover
       placement: 'right'

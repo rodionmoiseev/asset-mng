@@ -23,6 +23,10 @@ div.hidden {
     display: none;
 }
 
+.typeahead {
+    z-index: 9999;
+}
+
 /*
  * Tasks
  */
@@ -33,6 +37,10 @@ div.hidden {
 
 .logst-well{
     padding: 5px 15px 15px;
+}
+
+.edit-asset{
+    margin-right: 5px;
 }
 
 /*

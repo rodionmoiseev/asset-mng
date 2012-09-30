@@ -133,6 +133,7 @@ object Activity extends Controller {
 
   private def update(entry: HistoryEntry, user: String): Option[HistoryEntry] = {
     entry.obj match {
+      case obj: Asset => Some(Assets.updateAsset(obj, user, Undo(entry.action)))
       case obj: AssetTask => Some(AssetTasks.updateTask(obj, user, Undo(entry.action)))
       case _ => None
     }

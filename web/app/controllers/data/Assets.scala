@@ -16,6 +16,7 @@ import models.Asset
 import models.HistoryEntry
 import scala.Some
 import models.Delete
+import util.Date
 import view.{ViewAssetStatus, ViewAsset}
 import models.Add
 import assetstatus.Module._
@@ -56,7 +57,7 @@ object Assets extends Controller {
 
   def form2asset = (asset: AssetForm) =>
     Asset(
-      DB.NEW_ID,
+      asset.id,
       asset.hostname,
       asset.ip,
       asset.description,
@@ -64,7 +65,8 @@ object Assets extends Controller {
       Some(Tags.toDelimitedList(asset.tags)),
       asset.parent_id)
 
-  case class AssetForm(hostname: String,
+  case class AssetForm(id: Long,
+                       hostname: String,
                        ip: String,
                        description: String,
                        admin: String,
@@ -72,6 +74,7 @@ object Assets extends Controller {
                        parent_id: Option[Long])
 
   val assetForm = Form(mapping(
+    "id" -> longNumber,
     "hostname" -> nonEmptyText,
     "ip" -> nonEmptyText.verifying("Must be a valid IPv4/v6 address", IPUtils.isIPAddress _),
     "description" -> text,
@@ -92,7 +95,7 @@ object Assets extends Controller {
           errors => BadRequest(errors.errorsAsJson),
           viewAsset => {
             val hist = addAsset(form2asset(viewAsset), ctx.user)
-            Ok(generate(Map("status" -> ctx.m.views.assets.successfullyAdded,
+            Ok(generate(Map("status" -> ctx.m.views.assets.successfullyAdded(viewAsset.hostname),
               "asset" -> asset2view(hist.obj.asInstanceOf[Asset], ctx.m))))
           }
         )
@@ -106,6 +109,30 @@ object Assets extends Controller {
   def addAsset(asset: Asset, user: String, action: HistoryAction = Add()): HistoryEntry = {
     val newAsset = assetsDB.save(asset)
     activityDB.save(HistoryEntry(DB.NEW_ID, user, new util.Date, action, newAsset))
+  }
+
+  def update = AssetMngAction {
+    implicit ctx =>
+      ctx.request.body.asJson match {
+        case Some(json) => assetForm.bind(json).fold(
+          errors => BadRequest(errors.errorsAsJson),
+          viewAsset => {
+            val newAsset = form2asset(viewAsset)
+            updateAsset(newAsset, ctx.user)
+            Ok(generate(Map("status" -> ctx.m.views.assets.successfullyUpdated(newAsset.hostname),
+              "asset" -> asset2view(newAsset, ctx.m))))
+          }
+        )
+        case None => BadRequest(toJson(
+          Map("status" -> "ERROR",
+            "cause" -> ("Failed to parse body as JSON: " + ctx.request.body.asText.getOrElse(ctx.request.body.toString)))
+        ))
+      }
+  }
+
+  def updateAsset(asset: Asset, user: String, action: HistoryAction = Modify()): HistoryEntry = {
+    val oldItem = assetsDB.update(asset)
+    activityDB.save(new HistoryEntry(DB.NEW_ID, user, new Date, action, oldItem))
   }
 
   def delete(id: Long) = AssetMngAction {
