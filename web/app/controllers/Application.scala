@@ -43,7 +43,7 @@ object Application extends Controller {
     implicit request =>
       loginForm.bindFromRequest.fold(
         noLoginSupplied => {
-          Ok(views.html.login(getC10NMsgFactory(request).get(classOf[Messages])))
+          Ok(views.html.login(C10N.get(classOf[Messages], getLocale(request))))
         },
         form => {
           request.session.get("logst_referer") match {
@@ -70,9 +70,8 @@ object Application extends Controller {
     Action {
       request => {
         val lang = getLang(request)
-        val c10nMsgFactory = getC10NMsgFactory(request)
         request.session.get("user").map(user =>
-          f(AssetMngContext(user, lang, c10nMsgFactory, request)).withSession(
+          f(AssetMngContext(user, lang, request)).withSession(
             request.session
               +("user", user)
               +("c10n-lang", lang)
@@ -86,20 +85,7 @@ object Application extends Controller {
     }
   }
 
-  def getC10NMsgFactory(request: Request[AnyContent]): C10NMsgFactory = {
-    val c10nLang = getLang(request)
-    C10N.configure(new C10NConfigBase {
-      def configure() {
-        install(new DefaultC10NAnnotations)
-        //fallback to @En values
-        bindAnnotation(classOf[En])
-        setLocaleProvider(new LocaleProvider {
-          def getLocale = new Locale(c10nLang)
-        })
-      }
-    })
-    C10N.getRootFactory
-  }
+  def getLocale(request: Request[AnyContent]): Locale = new Locale(getLang(request))
 
   private def getLang(request: Request[AnyContent]): String =
     request.session.get("c10n-lang").getOrElse(request.queryString.get("lang").getOrElse(Seq("en")).head)

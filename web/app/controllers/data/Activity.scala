@@ -16,6 +16,7 @@ import org.apache.abdera.Abdera
 import java.io.StringWriter
 import xml.PrettyPrinter
 import controllers.Application
+import c10n.C10N
 
 /**
  *
@@ -60,7 +61,7 @@ object Activity extends Controller {
 
   def atom = Action {
     implicit request =>
-      val m = Application.getC10NMsgFactory(request).get(classOf[Messages])
+      val m = C10N.get(classOf[Messages], Application.getLocale(request))
       val history = activityDB.all.reverse
       val abdera = new Abdera
       val feed = abdera.newFeed
