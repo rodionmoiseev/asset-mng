@@ -1,14 +1,19 @@
-buildscript {
+buildscript{
   repositories{
     maven{
       url "https://raw.github.com/rodionmoiseev/maven-repo/master/repo/releases"
     }
+    maven{
+      url "https://raw.github.com/rodionmoiseev/maven-repo/master/repo/snapshots"
+    }
   }
-  dependencies {
+  dependencies{
     classpath group: 'org.rodion.gradle', name: 'idea-scala-plugin', version: '0.2'
+    classpath group: 'org.rodion.gradle', name: 'idea-utils-plugin', version: '0.2-SNAPSHOT'
   }
 }
 
+apply plugin: 'idea-utils'
 apply plugin: 'idea-scala-project'
 
 allprojects{
@@ -17,8 +22,20 @@ allprojects{
   }
 }
 
+idea{
+  project{
+    jdkName = '1.7'
+    languageLevel = '1.7'
+
+    vcs{
+      vcs = 'Git'
+      directory = '$PROJECT_DIR$/..'
+    }
+  }
+}
+
 dependencies{
-  scalaApi 'org.scala-lang:scala-library:2.9.1'
-  scalaTools 'org.scala-lang:scala-compiler:2.9.1'
-  scalaTools 'org.scala-lang:scala-library:2.9.1'
+  scalaApi 'org.scala-lang:scala-library:2.10.1'
+  scalaTools 'org.scala-lang:scala-compiler:2.10.1'
+  scalaTools 'org.scala-lang:scala-library:2.10.1'
 }

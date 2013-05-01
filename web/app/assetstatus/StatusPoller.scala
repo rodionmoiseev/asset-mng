@@ -2,13 +2,14 @@ package assetstatus
 
 import akka.actor.{ActorRef, Props, ActorSystem, Actor}
 import akka.pattern.ask
+import akka.util.Timeout
 import models.Asset
-import akka.dispatch.Await
-import akka.util.{Duration, Timeout}
-import akka.util.duration.intToDurationInt
+import scala.concurrent._
+import scala.concurrent.duration._
+import java.util.Date
 import java.util.concurrent.TimeUnit
 import dao.DB
-import java.util.Date
+import ExecutionContext.Implicits.global
 
 /**
  *
@@ -36,7 +37,7 @@ class ActorBasedAssetStatusSystem(assetsDB: DB[Asset], statusChecker: AssetStatu
 
 class StatusPoller(statusKeeper: ActorRef, assetsDB: DB[Asset], statusChecker: AssetStatusChecker) extends Actor {
 
-  protected def receive = {
+  def receive = {
     case pingAll: PingAll =>
       statusKeeper ! Store(assetsDB.all.map(asset => (asset, statusChecker.checkStatus(asset))).toMap)
   }
@@ -45,7 +46,7 @@ class StatusPoller(statusKeeper: ActorRef, assetsDB: DB[Asset], statusChecker: A
 class StatusKeeper extends Actor {
   private var results: Map[Asset, AssetStatus] = Map()
 
-  protected def receive = {
+  def receive = {
     case store: Store => results = store.results
     case query: QueryStatus =>
       sender ! results.get(query.asset).getOrElse(AssetStatus(query.asset, "checking", new Date))

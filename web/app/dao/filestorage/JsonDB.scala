@@ -113,13 +113,13 @@ class HistoryEntryWrites extends Writes[HistoryEntry] {
 }
 
 class HistoryEntryReads extends Reads[HistoryEntry] {
-  def reads(json: JsValue) = HistoryEntry(
+  def reads(json: JsValue) = JsSuccess(HistoryEntry(
     (json \ "id").as[Long],
     (json \ "user").as[String],
     new Date((json \ "date").as[Long]),
     (json \ "action").as[HistoryAction](new HistoryActionReads),
     (json \ "obj").as[HistoryObject](new HistoryObjectReads)
-  )
+  ))
 }
 
 class HistoryActionWrites extends Writes[HistoryAction] {
@@ -137,11 +137,12 @@ class HistoryActionWrites extends Writes[HistoryAction] {
 }
 
 class HistoryActionReads extends Reads[HistoryAction] {
-  def reads(json: JsValue) = (json \ "type").as[String] match {
-    case "add" => Add()
-    case "modify" => Modify()
-    case "delete" => Delete()
-    case "undo" => Undo(reads(json \ "undoAction"))
+  def reads(json: JsValue): JsResult[HistoryAction] = (json \ "type").as[String] match {
+    case "add" => JsSuccess(Add())
+    case "modify" => JsSuccess(Modify())
+    case "delete" => JsSuccess(Delete())
+    case "undo" => reads(json \ "undoAction")
+    case unknown => JsError("Unknown field %s".format(unknown))
   }
 }
 
@@ -160,10 +161,11 @@ class HistoryObjectWrites extends Writes[HistoryObject] {
 }
 
 class HistoryObjectReads extends Reads[HistoryObject] {
-  def reads(json: JsValue) = (json \ "type").as[String] match {
-    case "asset" => parse[Asset]((json \ "obj").as[String])
-    case "assettask" => parse[AssetTask]((json \ "obj").as[String])
-    case "undoentry" => json.as[UndoEntry](new UndoEntryReads)
+  def reads(json: JsValue): JsResult[HistoryObject] = (json \ "type").as[String] match {
+    case "asset" => JsSuccess(parse[Asset]((json \ "obj").as[String]))
+    case "assettask" => JsSuccess(parse[AssetTask]((json \ "obj").as[String]))
+    case "undoentry" => JsSuccess(json.as[UndoEntry](new UndoEntryReads))
+    case unknown => JsError("Unknown field %s".format(unknown))
   }
 }
 
@@ -174,10 +176,10 @@ class UndoEntryWrites extends Writes[UndoEntry] {
 }
 
 class UndoEntryReads extends Reads[UndoEntry] {
-  def reads(json: JsValue) = UndoEntry(
+  def reads(json: JsValue) = JsSuccess(UndoEntry(
     (json \ "entryType").as[String] match {
       case "assetentry" => AssetEntry()
       case "assettaskentry" => AssetTaskEntry()
     }
-  )
+  ))
 }
